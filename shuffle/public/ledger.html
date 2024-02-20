@@ -34,7 +34,14 @@
               </li>
               <li class="mr-10"><a class="inline-block text-sm font-semibold text-gray-300 hover:text-gray-200" href="ledger.html">Payment History</a></li>
               <li class="mr-10"><a class="inline-block text-sm font-semibold text-gray-300 hover:text-gray-200" href="community.html">Our Community</a></li>
-              <li><a class="inline-block text-sm font-semibold text-gray-300 hover:text-gray-200" href="#">All Options</a></li>
+              <li class="relative">
+                <a id="all-options-link" class="inline-block text-sm font-semibold text-gray-300 hover:text-gray-200 cursor-pointer" href="#">All Options</a>
+                <!-- Dropdown Menu -->
+                <div class="dropdown-menu absolute hidden bg-gray-700 text-white">
+                  <a class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600" href="\changepasswordloggedin.html">Change Password</a>
+                  <!-- Add more links as needed -->
+                </div>
+              </li> 
             </ul></div>
           <div class="hidden xl:block w-full md:w-auto px-2"></div>
           <div class="w-full sm:w-auto px-3 mb-4">
@@ -131,6 +138,21 @@
     <script>
       // Use the logoutUser function from navbar.js when the logout button is clicked
       document.getElementById('logoutButton').addEventListener('click', logoutUser);
+    </script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('all-options-link').addEventListener('click', function(event) {
+            event.stopPropagation(); // Prevent click from immediately propagating to document
+            showDropdown();
+        });
+
+        document.addEventListener('click', function(event) {
+            var dropdownMenu = document.querySelector('#all-options-link + .dropdown-menu');
+            if (dropdownMenu.style.display === 'block' && !dropdownMenu.contains(event.target) && event.target.id !== 'all-options-link') {
+                dropdownMenu.style.display = 'none'; // Hide the dropdown
+            }
+        });
+      });
     </script>
 </body>
 </html>
