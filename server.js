@@ -10,7 +10,7 @@ const port = 5000;
 
 // CORS middleware setup
 app.use(cors({
-  origin: 'http://localhost:8080', // This is where your front-end is hostedddd
+  origin: 'http://localhost:8080', // This is where your front-end is hosted
   credentials: true
 }));
 
