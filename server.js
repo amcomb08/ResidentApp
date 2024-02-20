@@ -23,7 +23,7 @@ const db = mysql.createPool({
     host: dbHost,
     user: 'root',
     password: 'CULTUREAPP',
-    database: 'culture-app-db',
+    database: 'ResidentAppDB',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
@@ -77,21 +77,21 @@ app.use((req, res, next) => {
 
 app.use(express.json()); // To handle JSON payloads
 
-// Registration route
+// Register a user
 app.post('/register', (req, res) => {
-    let username = req.body.username;
-    let password = req.body.password;
+    let Email = req.body.Email;
+    let Password = req.body.Password;
 
-    // First, hash the password
-    bcrypt.hash(password, 10, (err, hashedPassword) => {
+    // First, hash the Password
+    bcrypt.hash(Password, 10, (err, hashedPassword) => {
         if (err) {
-            res.json({ success: false, message: 'Error hashing password.' });
+            res.json({ success: false, message: 'Error hashing Password.' });
             return;
         }
 
-        // Insert the new user into the database with hashed password
-        const query = "INSERT INTO Users (username, password) VALUES (?, ?)";
-        db.query(query, [username, hashedPassword], (err, results) => {
+        // Insert the new user into the database with hashed Password
+        const query = "INSERT INTO Users (Email, Password) VALUES (?, ?)";
+        db.query(query, [Email, hashedPassword], (err, results) => {
             if (err) {
                 res.json({ success: false, message: 'Error registering user.' });
                 return;
@@ -103,20 +103,21 @@ app.post('/register', (req, res) => {
 });
 
 
-// Login route
+// Login to account
 app.post('/login', (req, res) => {
-    let username = req.body.username;
-    let password = req.body.password;
-    const query = "SELECT * FROM Users WHERE username = ?";
-    db.query(query, [username], (err, results) => {
+    console.log("Before Login Session:", req.session);
+    let Email = req.body.username;
+    let Password = req.body.password;
+    const query = "SELECT * FROM UserAccounts WHERE Email = ?";
+    db.query(query, [Email], (err, results) => {
         if (err) throw err;
         if (results.length > 0) {
             const user = results[0];
-            bcrypt.compare(password, user.password, (err, isMatch) => {
+            bcrypt.compare(Password, user.Password, (err, isMatch) => { // Compare the hashed Password
                 if (isMatch) {
                     req.session.loggedin = true;
-                    req.session.username = username;
-                    req.session.userId = user.id;
+                    req.session.Email = Email;
+                    req.session.userId = user.UserID;
                     console.log("After Login Session:", req.session);
                     res.json({ success: true });
                     console.log("Immediately after setting:", req.session.loggedin);
@@ -125,7 +126,7 @@ app.post('/login', (req, res) => {
                 }
             });
         } else {
-            res.json({ success: false, message: 'Username does not exist!' });
+            res.json({ success: false, message: 'Email does not exist!' });
         }
     });
 });

@@ -38,3 +38,21 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+
+// Define the logout function
+function logoutUser() {
+    fetch('http://localhost:5000/logout', { credentials: 'include', method: 'POST' })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Redirect to login page on successful logout
+            window.location.href = './login.html';
+        } else {
+            // Handle any errors or unsuccessful logout attempts
+            console.error('Logout failed:', data.message);
+        }
+    })
+    .catch(error => {
+        console.error('There was an error during logout:', error);
+    });
+}

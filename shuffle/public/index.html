@@ -7,12 +7,27 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="css/tailwind/tailwind.min.css">
-    <link rel="icon" type="image/png" sizes="32x32" href="shuffle-for-tailwind.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/Logo.png">
     <script src="js/main.js"></script>
 </head>
 <body class="antialiased bg-body text-body font-body">
-    <div class="">
-                
+    <script>
+      window.onload = function() {
+          fetch('http://localhost:5000/checkLogin', { credentials: 'include' })
+          .then(response => response.json())
+          .then(data => {
+              if (!data.loggedin) {
+                  // User is not logged in, redirect to login page
+                  window.location.href = 'login.html';
+              }
+              // If user is logged in, no action is needed. They can continue using the page.
+          })
+          .catch(error => {
+             console.error('There was an error checking the login status:', error);
+          });
+      }
+    </script>
+    <div class="">            
       <section class="relative"><nav class="flex items-center p-8 bg-gray-700 mb-3"><div class="w-full xl:w-auto px-2 xl:mr-12">
             <div class="flex items-center justify-between">
               <a class="inline-flex items-center h-8" href="index.html">
@@ -39,7 +54,7 @@
           <div class="hidden xl:block w-full md:w-auto px-2"></div>
           <div class="w-full sm:w-auto px-3 mb-4">
             <a href="#">
-              <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Sign Out</button>
+              <button id="logoutButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Sign Out</button>
             </a>
           </div>
         </nav></section>
@@ -128,6 +143,10 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="js/charts-demo.js"></script>
+    <script>
+      // Use the logoutUser function from navbar.js when the logout button is clicked
+      document.getElementById('logoutButton').addEventListener('click', logoutUser);
+    </script>
 </body>
 </html>
 
