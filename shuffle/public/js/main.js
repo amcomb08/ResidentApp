@@ -56,3 +56,10 @@ function logoutUser() {
         console.error('There was an error during logout:', error);
     });
 }
+
+function showDropdown() {
+    console.log('showDropdown');
+    var dropdownMenu = document.querySelector('#all-options-link + .dropdown-menu');
+    dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+}
+
