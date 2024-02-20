@@ -36,16 +36,6 @@ app.get('/', (req, res) => {
 
 });
 
-// Endpoint to get samples
-app.get('/samples', (req, res) => {
-  const query = 'SELECT * FROM Samples';
-  
-  db.query(query, (err, result) => {
-    if (err) throw err;
-    res.json(result);
-  });
-});
-
 // Endpoint to get count of samples
 app.get('/getSampleCount', (req, res) => {
   const query = 'SELECT COUNT(*) as count FROM Samples';
@@ -103,6 +93,38 @@ app.post('/register', (req, res) => {
 });
 
 
+// Register a user
+app.post('/changepasswordloggedin', (req, res) => {
+    let newpassword = req.body.newPassword;
+    let confirmNewpassword = req.body.confirmNewPassword;
+    let userId = req.session.userId;
+
+    // Check if passwords match first
+    if (newpassword !== confirmNewpassword) {
+        return res.json({ success: false, message: 'Passwords do not match.' });
+    }
+
+    // hash the Newpassword if they match
+    bcrypt.hash(newpassword, 10, (err, hashedPassword) => {
+        if (err) {
+            res.json({ success: false, message: 'Error hashing Password.' });
+            return;
+        }
+
+    // Update the user's password in the database with the hashed password
+    const query = "UPDATE UserAccounts SET Password = ? WHERE UserID = ?";
+    db.query(query, [hashedPassword, userId], (err, results) => {
+        if (err) {
+            res.json({ success: false, message: 'Error updating password.' });
+            return;
+        }
+
+        res.json({ success: true, message: 'Password updated successfully.' });
+    });
+    });
+});
+
+
 // Login to account
 app.post('/login', (req, res) => {
     console.log("Before Login Session:", req.session);
@@ -131,224 +153,6 @@ app.post('/login', (req, res) => {
     });
 });
 
-app.post('/saveChoice', (req, res) => {
-    // Retrieve data from the request body
-    const userId = req.session.userId;
-    const sampleId = req.body.sampleId;
-    const choice = req.body.choice;
-
-    // Check if the user has already made a choice for the given sampleId
-    const checkQuery = "SELECT * FROM User_Choices WHERE user_id = ? AND sample_id = ?";
-    db.query(checkQuery, [userId, sampleId], (err, results) => {
-        if (err) throw err;
-
-        if (results.length > 0) {
-            // Update existing choice
-            const updateQuery = "UPDATE User_Choices SET choice = ? WHERE user_id = ? AND sample_id = ?";
-            db.query(updateQuery, [choice, userId, sampleId], (err, results) => {
-                if (err) {
-                    res.json({ success: false, message: 'Error updating choice.' });
-                    return;
-                }
-                res.json({ success: true, message: 'Choice updated successfully.' });
-            });
-        } else {
-            // Insert new choice
-            const insertQuery = "INSERT INTO User_Choices (user_id, sample_id, choice) VALUES (?, ?, ?)";
-            db.query(insertQuery, [userId, sampleId, choice], (err, results) => {
-                if (err) {
-                    res.json({ success: false, message: 'Error saving choice.' });
-                    return;
-                }
-                res.json({ success: true, message: 'Choice saved successfully.' });
-            });
-        }
-    });
-});
-
-app.get('/getUserChoices', (req, res) => {
-    // Use the userID stored in the session
-    const userId = req.session.userId;
-    console.log(userId)
-    if (!userId) {
-        res.json({ success: false, message: 'User not authenticated.' });
-        return;
-    }
-
-    // Construct a query to get the user choices
-    const selectQuery = "SELECT sample_id FROM User_Choices WHERE user_id = ?";
-    db.query(selectQuery, [userId], (err, results) => {
-        if (err) {
-            res.json({ success: false, message: 'Error fetching choices.' });
-            return;
-        }
-
-        const processedSamples = results.map(row => row.sample_id);
-        res.json({ success: true, data: processedSamples });
-    });
-});
-
-app.post('/insertSamplesToReader', (req, res) => {
-    const userId = req.session.userId;
-    const samples = req.body.samples;
-
-    // Get a connection from the pool
-    db.getConnection((err, connection) => {
-        if (err) {
-            res.json({ success: false, message: 'Error getting database connection.' });
-            return;
-        }
-
-        // Start a new transaction
-        connection.beginTransaction(err => {
-            if (err) {
-                connection.release();
-                res.json({ success: false, message: 'Error starting transaction.' });
-                return;
-            }
-
-            const insertQuery = "INSERT INTO Reader (user_id, sample_id) VALUES ?";
-            const values = samples.map(sampleId => [userId, sampleId]);
-
-            // Perform the query using the obtained connection
-            connection.query(insertQuery, [values], (err) => {
-                if (err) {
-                    connection.rollback(() => {
-                        connection.release();
-                        res.json({ success: false, message: 'Error inserting samples.' });
-                    });
-                    return;
-                }
-
-                // Commit the transaction
-                connection.commit(err => {
-                    if (err) {
-                        connection.rollback(() => {
-                            connection.release();
-                            res.json({ success: false, message: 'Error committing transaction.' });
-                        });
-                        return;
-                    }
-                    connection.release();
-                    res.json({ success: true });
-                });
-            });
-        });
-    });
-});
-
-app.get('/getReaderSamples', (req, res) => {
-    const userId = req.session.userId;
-    if (!userId) {
-        res.json({ success: false, message: 'User not authenticated.' });
-        return;
-    }
-
-    const selectQuery = "SELECT sample_id FROM Reader WHERE user_id = ?";
-    db.query(selectQuery, [userId], (err, results) => {
-        if (err) {
-            res.json({ success: false, message: 'Error fetching sample IDs.' });
-            return;
-        }
-
-        const visibleSampleIds = results.map(row => row.sample_id);
-        res.json({ success: true, data: visibleSampleIds });
-    });
-});
-
-app.post('/deleteReaderSample', (req, res) => {
-    const userId = req.session.userId;
-    const sampleBarcode = req.body.sampleBarcode;
-
-    if (!userId) {
-        res.json({ success: false, message: 'User not authenticated.' });
-        return;
-    }
-
-    if (!sampleBarcode) {
-        res.json({ success: false, message: 'Sample barcode not provided.' });
-        return;
-    }
-
-    // Get a connection from the pool
-    db.getConnection((err, connection) => {
-        if (err) {
-            return res.json({ success: false, message: 'Error getting database connection.', error: err });
-        }
-
-        // Start a transaction
-        connection.beginTransaction(err => {
-            if (err) {
-                connection.release();
-                return res.json({ success: false, message: 'Transaction failed to start.', error: err });
-            }
-
-            // Delete the sample from the Reader table
-            const deleteQuery = "DELETE FROM Reader WHERE user_id = ? AND sample_id = ?";
-            connection.query(deleteQuery, [userId, sampleBarcode], (err, deleteResult) => {
-                if (err) {
-                    return connection.rollback(() => {
-                        connection.release();
-                        res.json({ success: false, message: 'Error deleting sample.', error: err });
-                    });
-                }
-
-                // If delete is successful, insert into SubmittedSamples
-                const insertQuery = "INSERT INTO SubmittedSamples (user_id, sample_id) VALUES (?, ?)";
-                connection.query(insertQuery, [userId, sampleBarcode], (err, insertResult) => {
-                    if (err) {
-                        return connection.rollback(() => {
-                            connection.release();
-                            res.json({ success: false, message: 'Error inserting into SubmittedSamples.', error: err });
-                        });
-                    }
-
-                    // Commit the transaction
-                    connection.commit(err => {
-                        if (err) {
-                            return connection.rollback(() => {
-                                connection.release();
-                                res.json({ success: false, message: 'Transaction failed to commit.', error: err });
-                            });
-                        }
-
-                        // Release the connection back to the pool
-                        connection.release();
-
-                        // If all is good, send success response
-                        res.json({ success: true, message: 'Sample deleted and logged successfully.' });
-                    });
-                });
-            });
-        });
-    });
-});
-
-app.get('/getSampleDetails', (req, res) => {
-    const barcode = req.query.barcode;
-
-    if (!barcode) {
-        res.json({ success: false, message: 'No barcode provided.' });
-        return;
-    }
-
-    const selectQuery = "SELECT * FROM Samples WHERE barcode = ?";
-    db.query(selectQuery, [barcode], (err, results) => {
-        if (err) {
-            res.json({ success: false, message: 'Error fetching sample details.' });
-            return;
-        }
-
-        if (results.length > 0) {
-            const sampleDetails = results[0]; // Assuming barcode is unique and returns only one record
-            res.json({ success: true, sampleImage: sampleDetails.imageName, ...sampleDetails });
-        } else {
-            res.json({ success: false, message: 'No sample found with the provided barcode.' });
-        }
-    });
-});
-
-
 app.get('/checkLogin', (req, res) => {
     console.log('Session:', req.session); // Log the session data
     
@@ -374,10 +178,6 @@ app.post('/logout', (req, res) => {
     } else {
         res.json({ success: false, message: 'No session to destroy.' });
     }
-});
-
-app.get('/getCurrentUserId', (req, res) => {
-    res.json({ userId: req.session.userId });
 });
 
 
