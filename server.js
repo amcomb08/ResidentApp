@@ -4,6 +4,10 @@ const mysql = require('mysql2');
 const bcrypt = require('bcryptjs');
 const session = require('express-session');
 const cors = require('cors');
+const nodemailer = require('nodemailer');
+const bodyParser = require('body-parser');
+const e = require('express');
+const crypto = require('crypto');
 
 const app = express();
 const port = 5000;
@@ -13,6 +17,18 @@ app.use(cors({
   origin: 'http://localhost:8080', // This is where your front-end is hosted
   credentials: true
 }));
+
+// Middleware
+app.use(bodyParser.json());
+
+// Nodemailer setup
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+       user: 'CSE696ResidentApp@gmail.com', 
+       pass: 'xhmq jwmn wpqo ipki' 
+    }
+   });   
 
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
@@ -35,17 +51,6 @@ app.get('/', (req, res) => {
     res.status(200).send('Hello World!');
 
 });
-
-// Endpoint to get count of samples
-app.get('/getSampleCount', (req, res) => {
-  const query = 'SELECT COUNT(*) as count FROM Samples';
-  
-  db.query(query, (err, result) => {
-    if (err) throw err;
-    res.json({ count: result[0].count });
-  });
-});
-
 
 app.use(session({
     secret: 'secret',
@@ -93,7 +98,7 @@ app.post('/register', (req, res) => {
 });
 
 
-// Register a user
+// Change user password
 app.post('/changepasswordloggedin', (req, res) => {
     let newpassword = req.body.newPassword;
     let confirmNewpassword = req.body.confirmNewPassword;
@@ -113,6 +118,37 @@ app.post('/changepasswordloggedin', (req, res) => {
 
     // Update the user's password in the database with the hashed password
     const query = "UPDATE UserAccounts SET Password = ? WHERE UserID = ?";
+    db.query(query, [hashedPassword, userId], (err, results) => {
+        if (err) {
+            res.json({ success: false, message: 'Error updating password.' });
+            return;
+        }
+
+        res.json({ success: true, message: 'Password updated successfully.' });
+    });
+    });
+});
+
+// Change user password
+app.post('/changepasswordwithlink', (req, res) => {
+    let newpassword = req.body.newPassword;
+    let confirmNewpassword = req.body.confirmNewPassword;
+    let userId = req.session.resetEmail;
+
+    // Check if passwords match first
+    if (newpassword !== confirmNewpassword) {
+        return res.json({ success: false, message: 'Passwords do not match.' });
+    }
+
+    // hash the Newpassword if they match
+    bcrypt.hash(newpassword, 10, (err, hashedPassword) => {
+        if (err) {
+            res.json({ success: false, message: 'Error hashing Password.' });
+            return;
+        }
+
+    // Update the user's password in the database with the hashed password
+    const query = "UPDATE UserAccounts SET Password = ? WHERE Email = ?";
     db.query(query, [hashedPassword, userId], (err, results) => {
         if (err) {
             res.json({ success: false, message: 'Error updating password.' });
@@ -153,6 +189,7 @@ app.post('/login', (req, res) => {
     });
 });
 
+//Check if a user is logged in
 app.get('/checkLogin', (req, res) => {
     console.log('Session:', req.session); // Log the session data
     
@@ -163,6 +200,7 @@ app.get('/checkLogin', (req, res) => {
     }
 });
 
+// Logout
 app.post('/logout', (req, res) => {
     if (req.session) {
         // Destroy the session
@@ -178,6 +216,59 @@ app.post('/logout', (req, res) => {
     } else {
         res.json({ success: false, message: 'No session to destroy.' });
     }
+});
+
+app.post('/send-reset-code', (req, res) => {
+    const { email } = req.body;
+    // Generate a unique token using the crypto module
+    const resetToken = crypto.randomBytes(20).toString('hex');
+    console.log(email, resetToken);
+    
+    // Define your mail options
+    const mailOptions = {
+        from: 'CSE696ResidentApp@gmail.com',
+        to: email,
+        subject: 'Password Reset',
+        text: `Your reset token is: ${resetToken}`
+    };
+    
+    // Send email with the token
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.error('Error sending email:', error);
+            return res.json({ success: false, message: 'Failed to send email.' });
+        } else {
+            // If email is successfully sent, store the token in the database
+            const query = 'INSERT INTO ResetToken (Email, ResetToken) VALUES (?, ?) ON DUPLICATE KEY UPDATE ResetToken = ?';
+            db.query(query, [email, resetToken, resetToken], (dbError, dbResults) => {
+                if (dbError) {
+                    console.error('Error saving reset token to database:', dbError);
+                    return res.json({ success: false, message: 'Failed to save reset token.' });
+                }
+                return res.json({ success: true, message: 'Reset token sent to email.' });
+            });
+        }
+    });
+});
+
+app.post('/verify-reset-code', async (req, res) => {
+    const { email, verificationCode } = req.body;
+    // Fetch the stored token from the database
+    const query = "SELECT ResetToken FROM ResetToken WHERE Email = ?";
+    db.query(query, [email], (err, results) => {
+        if (err) {
+            res.json({ success: false, message: 'Database query failed.' });
+            return;
+        }
+        if (results.length > 0 && results[0].ResetToken === verificationCode) {
+            req.session.loggedin = false;
+            req.session.resetEmail = email;
+            req.session.save();
+            res.json({ success: true });
+        } else {
+            res.json({ success: false, message: 'Invalid verification code.' });
+        }
+    });
 });
 
 

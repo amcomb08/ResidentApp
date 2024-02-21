@@ -12,6 +12,13 @@ CREATE TABLE UserAccounts (
     FOREIGN KEY (ApartmentNumber) REFERENCES Apartments(ApartmentNumber)
 );
 
+CREATE TABLE ResetToken (
+    Email VARCHAR(255) NOT NULL,
+    ResetToken VARCHAR(255) NOT NULL,
+    PRIMARY KEY (Email),
+    FOREIGN KEY (Email) REFERENCES UserAccounts(Email)
+);
+
 --Apartment Info
 CREATE TABLE Apartments (
     ApartmentNumber INT AUTO_INCREMENT PRIMARY KEY,
