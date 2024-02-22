@@ -11,7 +11,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="images/Logo.png">
     <script src="js/main.js"></script>
 </head>
-<body class="antialiased bg-body text-body font-body">
+<body class="antialiased bg-body text-body font-body" id="indexPage">
     <script>
       window.onload = function() {
           fetch('http://localhost:5000/checkLogin', { credentials: 'include' })
@@ -20,6 +20,10 @@
               if (!data.loggedin) {
                   // User is not logged in, redirect to login page
                   window.location.href = 'login.html';
+              }
+              else{
+                document.getElementById('indexPage').style.display = 'block';
+                getPaymentDue();
               }
               // If user is logged in, no action is needed. They can continue using the page.
           })

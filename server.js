@@ -21,7 +21,7 @@ app.use(cors({
 // Middleware
 app.use(bodyParser.json());
 
-// Nodemailer setup
+// Nodemailer setup (NEED TO ADD TO SECRETS)
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -220,25 +220,36 @@ app.post('/logout', (req, res) => {
 
 app.post('/send-reset-code', (req, res) => {
     const { email } = req.body;
-    // Generate a unique token using the crypto module
-    const resetToken = crypto.randomBytes(20).toString('hex');
-    console.log(email, resetToken);
-    
-    // Define your mail options
-    const mailOptions = {
-        from: 'CSE696ResidentApp@gmail.com',
-        to: email,
-        subject: 'Password Reset',
-        text: `Your reset token is: ${resetToken}`
-    };
-    
-    // Send email with the token
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            console.error('Error sending email:', error);
-            return res.json({ success: false, message: 'Failed to send email.' });
-        } else {
-            // If email is successfully sent, store the token in the database
+    // First, verify the email exists in the UserAccounts table
+    const emailCheckQuery = 'SELECT * FROM UserAccounts WHERE Email = ?';
+    db.query(emailCheckQuery, [email], (emailErr, emailResults) => {
+        if (emailErr) {
+            console.error('Database query error:', emailErr);
+            return res.json({ success: false, message: 'Database query error.' });
+        }
+        if (emailResults.length === 0) {
+            return res.json({ success: false, message: 'Email does not exist.' });
+        }
+
+        // Email exists, proceed with reset token generation
+        const resetToken = crypto.randomBytes(20).toString('hex');
+
+        // Define mail options
+        const mailOptions = {
+            from: 'CSE696ResidentApp@gmail.com',
+            to: email,
+            subject: 'Password Reset',
+            text: `Your reset token is: ${resetToken}`
+        };
+
+        // Send email with the token
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error('Error sending email:', error);
+                return res.json({ success: false, message: 'Failed to send email.' });
+            }
+
+            // Store the token in the database
             const query = 'INSERT INTO ResetToken (Email, ResetToken) VALUES (?, ?) ON DUPLICATE KEY UPDATE ResetToken = ?';
             db.query(query, [email, resetToken, resetToken], (dbError, dbResults) => {
                 if (dbError) {
@@ -247,7 +258,7 @@ app.post('/send-reset-code', (req, res) => {
                 }
                 return res.json({ success: true, message: 'Reset token sent to email.' });
             });
-        }
+        });
     });
 });
 
@@ -262,7 +273,7 @@ app.post('/verify-reset-code', async (req, res) => {
         }
         if (results.length > 0 && results[0].ResetToken === verificationCode) {
             req.session.loggedin = false;
-            req.session.resetEmail = email;
+            req.session.userId = email;
             req.session.save();
             res.json({ success: true });
         } else {
@@ -271,6 +282,32 @@ app.post('/verify-reset-code', async (req, res) => {
     });
 });
 
+app.get('/getPaymentsDue', (req, res) => {
+    const userID = req.session.userId;
+    console.log('User ID:', userID);
+    if (!userID) {
+        return res.status(401).json({ success: false, message: 'User not logged in' });
+    }
+    const getUserApartmentQuery = 'SELECT ApartmentNumber FROM UserAccounts WHERE UserID = ?';
+
+    db.query(getUserApartmentQuery, [userID], (err, userResults) => {
+        if (err || userResults.length === 0) {
+            return res.json({ success: false, message: 'Failed to find user apartment number.' });
+        }
+
+        const apartmentNumber = userResults[0].ApartmentNumber;
+        const getPaymentDueQuery = 'SELECT PaymentAmount FROM PaymentsDue WHERE ApartmentNumber = ?';
+
+        db.query(getPaymentDueQuery, [apartmentNumber], (err, paymentResults) => {
+            if (err || paymentResults.length === 0) {
+                return res.json({ success: false, message: 'Failed to find payment amount.' });
+            }
+
+            const paymentAmount = paymentResults[0].PaymentAmount;
+            return res.json({ success: true, paymentAmount: paymentAmount });
+        });
+    });
+});
 
 app.listen(port, () => {
   console.log(`Server started on http://localhost:${port}`);
