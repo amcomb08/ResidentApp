@@ -309,6 +309,95 @@ app.get('/getPaymentsDue', (req, res) => {
     });
 });
 
+app.post('/addpayment', (req, res) => {
+    // Check if the user is logged in and has a session
+    if (!req.session || !req.session.userId) {
+        return res.json({ success: false, message: 'User is not logged in.' });
+    }
+
+    const {
+        cardName,
+        cardExpiry,
+        cardNumber,
+        cardCVV,
+        cardNickname,
+        addressCountry,
+        addressCity,
+        addressState,
+        addressZip,
+        addressStreet
+    } = req.body;
+
+    const UserID = req.session.userId; // Obtain UserID from the session
+
+    // Construct the insert query
+    const insertQuery = `
+        INSERT INTO PaymentMethods (
+            NameOnCard,
+            Expiry,
+            CardNum,
+            CVV,
+            CardNickname,
+            Country,
+            City,
+            State,
+            Zip,
+            Address,
+            UserID
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    // Execute the insert query
+    db.query(insertQuery, [
+        cardName,
+        cardExpiry,
+        cardNumber,
+        cardCVV,
+        cardNickname,
+        addressCountry,
+        addressCity,
+        addressState,
+        addressZip,
+        addressStreet,
+        UserID
+    ], (err, results) => {
+        if (err) {
+            console.error('Database insert error:', err);
+            return res.json({ success: false, message: 'Database insert error.' });
+        }
+
+        // Successfully inserted data
+        return res.json({ success: true, message: 'Payment method added successfully.' });
+    });
+});
+
+app.get('/getPaymentMethods', (req, res) => {
+    const userID = req.session.userId;
+    console.log('User ID:', userID);
+
+    if (!userID) {
+        return res.status(401).json({ success: false, message: 'User not logged in' });
+    }
+
+    const getPaymentMethodsQuery = 'SELECT CardID, CardNickname FROM PaymentMethods WHERE UserID = ?';
+
+    db.query(getPaymentMethodsQuery, [userID], (err, paymentMethodsResults) => {
+        if (err) {
+            console.error('Database error:', err);
+            return res.json({ success: false, message: 'Database error occurred.' });
+        }
+        if (paymentMethodsResults.length === 0) {
+            return res.json({ success: false, message: 'No payment methods found.' });
+        }
+
+        // Sending the payment methods directly
+        return res.json({ success: true, paymentMethods: paymentMethodsResults });
+    });
+});
+
+
+
+
 app.listen(port, () => {
   console.log(`Server started on http://localhost:${port}`);
 });
