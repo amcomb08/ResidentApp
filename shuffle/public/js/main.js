@@ -63,18 +63,3 @@ function showDropdown() {
     dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
 }
 
-function getPaymentDue() {
-    fetch('http://localhost:5000/getPaymentsDue', {
-        credentials: 'include' // Important for sessions
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            document.getElementById('paymentsDueValue').textContent = `$${data.paymentAmount}`;
-        } else {
-            console.error(data.message);
-        }
-    })
-    .catch(error => console.error('Error:', error));
-}
-

@@ -41,7 +41,7 @@ function fillPaymentDropdown() {
   const dropdown = document.getElementById('paymentDropdown');
   
   // Fetch the payment method nicknames from the server
-  fetch('http://localhost:5000/getPaymentMethods', {
+  fetch('http://localhost:5000/payments/getPaymentMethods', {
     credentials: 'include' // Important for including session cookies with the request
   })
   .then(response => response.json())
@@ -68,6 +68,20 @@ function fillPaymentDropdown() {
   
 }
 
+function getPaymentDue() {
+  fetch('http://localhost:5000/payments/getPaymentDue', {
+      credentials: 'include' // Important for sessions
+  })
+  .then(response => response.json())
+  .then(data => {
+      if (data.success) {
+          document.getElementById('paymentsDueValue').textContent = `$${data.paymentAmount}`;
+      } else {
+          console.error(data.message);
+      }
+  })
+  .catch(error => console.error('Error:', error));
+}
 
 async function savePaymentClicked() { //Executes once save is clicked on the addpayment page
 
@@ -84,12 +98,11 @@ async function savePaymentClicked() { //Executes once save is clicked on the add
     addressStreet: document.getElementById('addressStreet').value.trim(),
   };
 
-  console.log(dataToInsert);
   // validate the data
   if (isValidData(dataToInsert)) {
     try {
       // You need to await the fetch call to complete
-      let response = await fetch('http://localhost:5000/addpayment', {
+      let response = await fetch('http://localhost:5000/payments/addpayment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToInsert),

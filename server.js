@@ -8,13 +8,17 @@ const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
 const e = require('express');
 const crypto = require('crypto');
+const paymentRoutes = require('./routes/paymentRoutes');
 
 const app = express();
 const port = 5000;
 
+const db = require('./routes/db');
+app.use('/payments', paymentRoutes);
+
 // CORS middleware setup
 app.use(cors({
-  origin: 'http://localhost:8080', // This is where your front-end is hosted
+  origin: 'http://localhost:8080',
   credentials: true
 }));
 
@@ -26,24 +30,12 @@ const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
        user: 'CSE696ResidentApp@gmail.com', 
-       pass: 'xhmq jwmn wpqo ipki' 
+       pass: 'htro tqlp kqtr kzvf' 
     }
-   });   
+});   
 
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
-
-// Database connection pool setup
-const dbHost = process.env.DB_HOST || 'localhost';
-const db = mysql.createPool({
-    host: dbHost,
-    user: 'root',
-    password: 'CULTUREAPP',
-    database: 'ResidentAppDB',
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
-});
 
 
 // Root path for health check
@@ -71,6 +63,9 @@ app.use((req, res, next) => {
   });
 
 app.use(express.json()); // To handle JSON payloads
+
+
+////Handle user registrationa and login///////
 
 // Register a user
 app.post('/register', (req, res) => {
@@ -281,122 +276,6 @@ app.post('/verify-reset-code', async (req, res) => {
         }
     });
 });
-
-app.get('/getPaymentsDue', (req, res) => {
-    const userID = req.session.userId;
-    console.log('User ID:', userID);
-    if (!userID) {
-        return res.status(401).json({ success: false, message: 'User not logged in' });
-    }
-    const getUserApartmentQuery = 'SELECT ApartmentNumber FROM UserAccounts WHERE UserID = ?';
-
-    db.query(getUserApartmentQuery, [userID], (err, userResults) => {
-        if (err || userResults.length === 0) {
-            return res.json({ success: false, message: 'Failed to find user apartment number.' });
-        }
-
-        const apartmentNumber = userResults[0].ApartmentNumber;
-        const getPaymentDueQuery = 'SELECT PaymentAmount FROM PaymentsDue WHERE ApartmentNumber = ?';
-
-        db.query(getPaymentDueQuery, [apartmentNumber], (err, paymentResults) => {
-            if (err || paymentResults.length === 0) {
-                return res.json({ success: false, message: 'Failed to find payment amount.' });
-            }
-
-            const paymentAmount = paymentResults[0].PaymentAmount;
-            return res.json({ success: true, paymentAmount: paymentAmount });
-        });
-    });
-});
-
-app.post('/addpayment', (req, res) => {
-    // Check if the user is logged in and has a session
-    if (!req.session || !req.session.userId) {
-        return res.json({ success: false, message: 'User is not logged in.' });
-    }
-
-    const {
-        cardName,
-        cardExpiry,
-        cardNumber,
-        cardCVV,
-        cardNickname,
-        addressCountry,
-        addressCity,
-        addressState,
-        addressZip,
-        addressStreet
-    } = req.body;
-
-    const UserID = req.session.userId; // Obtain UserID from the session
-
-    // Construct the insert query
-    const insertQuery = `
-        INSERT INTO PaymentMethods (
-            NameOnCard,
-            Expiry,
-            CardNum,
-            CVV,
-            CardNickname,
-            Country,
-            City,
-            State,
-            Zip,
-            Address,
-            UserID
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-
-    // Execute the insert query
-    db.query(insertQuery, [
-        cardName,
-        cardExpiry,
-        cardNumber,
-        cardCVV,
-        cardNickname,
-        addressCountry,
-        addressCity,
-        addressState,
-        addressZip,
-        addressStreet,
-        UserID
-    ], (err, results) => {
-        if (err) {
-            console.error('Database insert error:', err);
-            return res.json({ success: false, message: 'Database insert error.' });
-        }
-
-        // Successfully inserted data
-        return res.json({ success: true, message: 'Payment method added successfully.' });
-    });
-});
-
-app.get('/getPaymentMethods', (req, res) => {
-    const userID = req.session.userId;
-    console.log('User ID:', userID);
-
-    if (!userID) {
-        return res.status(401).json({ success: false, message: 'User not logged in' });
-    }
-
-    const getPaymentMethodsQuery = 'SELECT CardID, CardNickname FROM PaymentMethods WHERE UserID = ?';
-
-    db.query(getPaymentMethodsQuery, [userID], (err, paymentMethodsResults) => {
-        if (err) {
-            console.error('Database error:', err);
-            return res.json({ success: false, message: 'Database error occurred.' });
-        }
-        if (paymentMethodsResults.length === 0) {
-            return res.json({ success: false, message: 'No payment methods found.' });
-        }
-
-        // Sending the payment methods directly
-        return res.json({ success: true, paymentMethods: paymentMethodsResults });
-    });
-});
-
-
-
 
 app.listen(port, () => {
   console.log(`Server started on http://localhost:${port}`);
