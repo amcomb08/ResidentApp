@@ -79,14 +79,16 @@ CREATE TABLE Messages (
 -- Payments Made Table
 CREATE TABLE PaymentsMade (
     PaymentMadeID INT AUTO_INCREMENT PRIMARY KEY,
-    PaymentDueID INT NOT NULL,
+    PaymentMethodID INT NOT NULL,
+    ApartmentNumber INT NOT NULL,
     UserID INT NOT NULL,
     Amount DECIMAL(10, 2) NOT NULL,
     Status VARCHAR(255),
     Date DATETIME NOT NULL,
     Notes TEXT,
-    FOREIGN KEY (PaymentDueID) REFERENCES PaymentsDue(PaymentDueID),
-    FOREIGN KEY (UserID) REFERENCES UserAccounts(UserID)
+    FOREIGN KEY (ApartmentNumber) REFERENCES Apartments(ApartmentNumber), 
+    FOREIGN KEY (UserID) REFERENCES UserAccounts(UserID),
+    FOREIGN KEY (PaymentMethodID) REFERENCES PaymentMethods(CardID)
 );
 
 -- User Documents Table

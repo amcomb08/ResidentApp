@@ -181,7 +181,7 @@ router.post('/addpayment', (req, res) => {
 
 router.get('/getPaymentDue', (req, res) => {
     const userID = req.session.userId;
-    console.log('User ID:', userID);
+
     if (!userID) {
         return res.status(401).json({ success: false, message: 'User not logged in' });
     }
@@ -193,6 +193,8 @@ router.get('/getPaymentDue', (req, res) => {
         }
 
         const apartmentNumber = userResults[0].ApartmentNumber;
+        req.session.apartmentNumber = apartmentNumber;
+
         const getPaymentDueQuery = 'SELECT PaymentAmount FROM PaymentsDue WHERE ApartmentNumber = ?';
 
         db.query(getPaymentDueQuery, [apartmentNumber], (err, paymentResults) => {
@@ -203,6 +205,49 @@ router.get('/getPaymentDue', (req, res) => {
             const paymentAmount = paymentResults[0].PaymentAmount;
             return res.json({ success: true, paymentAmount: paymentAmount });
         });
+    });
+});
+
+router.post('/updatePaymentHistory', (req, res) => {
+    // Check if the user is logged in and has a session
+    if (!req.session || !req.session.userId) {
+        return res.json({ success: false, message: 'User is not logged in.' });
+    }
+    const {paymentMethod, paymentAmount, paymentNote, paymentDate} = req.body;
+
+    const userID = req.session.userId; // Obtain UserID from the session
+    const userApartment = req.session.apartmentNumber; // Obtain UserApartment from the session
+
+    // Construct the insert query
+    const insertQuery = `
+        INSERT INTO PaymentsMade (
+            PaymentMethodID,
+            UserID,
+            ApartmentNumber,
+            Amount,
+            Status,
+            Date,
+            Notes
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    // Execute the insert query
+    db.query(insertQuery, [
+        paymentMethod,
+        userID,
+        userApartment,
+        paymentAmount,
+        'Paid',
+        paymentDate,
+        paymentNote
+    ], (err, results) => {
+        if (err) {
+            console.error('Database insert error:', err);
+            return res.json({ success: false, message: 'Database insert error.' });
+        }
+
+        // Successfully inserted data
+        return res.json({ success: true, message: 'Payment method added successfully.' });
     });
 });
 

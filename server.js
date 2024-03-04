@@ -13,14 +13,11 @@ const paymentRoutes = require('./routes/paymentRoutes');
 const app = express();
 const port = 5000;
 
-const db = require('./routes/db');
-app.use('/payments', paymentRoutes);
-
 // CORS middleware setup
 app.use(cors({
-  origin: 'http://localhost:8080',
-  credentials: true
-}));
+    origin: 'http://localhost:8080',
+    credentials: true
+  }));
 
 // Middleware
 app.use(bodyParser.json());
@@ -63,6 +60,10 @@ app.use((req, res, next) => {
   });
 
 app.use(express.json()); // To handle JSON payloads
+
+
+const db = require('./routes/db');
+app.use('/payments', paymentRoutes);
 
 
 ////Handle user registrationa and login///////

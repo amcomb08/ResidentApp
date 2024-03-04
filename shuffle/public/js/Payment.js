@@ -83,6 +83,67 @@ function getPaymentDue() {
   .catch(error => console.error('Error:', error));
 }
 
+async function submitPayment() {
+  let paymentMethod = document.getElementById('paymentDropdown').value.trim();
+  let paymentAmount = document.getElementById('paymentAmount').value.trim(); 
+
+  if(paymentMethod === ''){
+    alert('Please select a payment method');
+    return;
+  }
+
+  if(paymentAmount === '' || paymentAmount === '0'){
+    alert('Please enter a payment amount');
+    return;
+  }
+
+  try {
+    let response = await fetch('http://localhost:5000/payments/makePayment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paymentMethod, paymentAmount }),
+        credentials: 'include' 
+    });
+    let data = await response.json();
+    console.log(data.success);
+
+    if (data.success) {
+        let paymentNote = document.getElementById('paymentNote').value.trim();
+        let paymentDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+        let paymentHistoryResponse = await fetch('http://localhost:5000/payments/updatePaymentHistory', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                paymentMethod,
+                paymentAmount,
+                paymentNote,
+                paymentDate
+            }),
+            credentials: 'include' 
+        });
+        let paymentHistoryData = await paymentHistoryResponse.json();
+
+        if (paymentHistoryData.success) {
+            // If the payment history was successfully updated
+            console.log('Payment history updated successfully');
+            document.cookie = "authenticated=true; path=/";  // Set the authenticated cookie
+            window.location = 'index.html';
+        } else {
+            // Handle failure to update payment history
+            console.error('Failed to update payment history:', paymentHistoryData.message);
+            alert(paymentHistoryData.message);
+        }
+    } else {
+        alert(data.message);
+    }
+  } catch (error) {
+    console.error('Error during payment submission:', error);
+    alert('An error occurred while processing your payment.');
+  }
+}
+
+
 async function savePaymentClicked() { //Executes once save is clicked on the addpayment page
 
   const dataToInsert = {
