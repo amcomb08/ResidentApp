@@ -15,7 +15,7 @@
 <body class="antialiased bg-body text-body font-body" id="indexPage">
     <script>
       window.onload = function() {
-          fetch('http://localhost:5000/checkLogin', { credentials: 'include' })
+          fetch('http://localhost:5000/login/checkLogin', { credentials: 'include' })
           .then(response => response.json())
           .then(data => {
               if (!data.loggedin) {
