@@ -181,6 +181,30 @@ router.post('/changepasswordwithlink', (req, res) => {
     });
 });
 
+// Register a user
+router.post('/register', (req, res) => {
+    let Email = req.body.Email;
+    let Password = req.body.Password;
+
+    // First, hash the Password
+    bcrypt.hash(Password, 10, (err, hashedPassword) => {
+        if (err) {
+            res.json({ success: false, message: 'Error hashing Password.' });
+            return;
+        }
+
+        // Insert the new user into the database with hashed Password
+        const query = "INSERT INTO Users (Email, Password) VALUES (?, ?)";
+        db.query(query, [Email, hashedPassword], (err, results) => {
+            if (err) {
+                res.json({ success: false, message: 'Error registering user.' });
+                return;
+            }
+
+            res.json({ success: true });
+        });
+    });
+});
 
 
 

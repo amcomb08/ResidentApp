@@ -56,34 +56,6 @@ const db = require('./routes/db');
 app.use('/payments', paymentRoutes);
 app.use('/login', loginRoutes);
 
-
-////Handle user registrationa and login///////
-
-// Register a user
-app.post('/register', (req, res) => {
-    let Email = req.body.Email;
-    let Password = req.body.Password;
-
-    // First, hash the Password
-    bcrypt.hash(Password, 10, (err, hashedPassword) => {
-        if (err) {
-            res.json({ success: false, message: 'Error hashing Password.' });
-            return;
-        }
-
-        // Insert the new user into the database with hashed Password
-        const query = "INSERT INTO Users (Email, Password) VALUES (?, ?)";
-        db.query(query, [Email, hashedPassword], (err, results) => {
-            if (err) {
-                res.json({ success: false, message: 'Error registering user.' });
-                return;
-            }
-
-            res.json({ success: true });
-        });
-    });
-});
-
 // Logout
 app.post('/logout', (req, res) => {
     if (req.session) {
