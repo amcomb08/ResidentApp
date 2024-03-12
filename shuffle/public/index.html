@@ -12,26 +12,10 @@
     <script src="js/main.js"></script>
     <script src="js/Payment.js"></script>
 </head>
-<body class="antialiased bg-body text-body font-body" id="indexPage">
+<body class="antialiased bg-body text-body font-body" style="display: none;">
     <script>
-      window.onload = function() {
-          fetch('http://localhost:5000/login/checkLogin', { credentials: 'include' })
-          .then(response => response.json())
-          .then(data => {
-              if (!data.loggedin) {
-                  // User is not logged in, redirect to login page
-                  window.location.href = 'login.html';
-              }
-              else{
-                document.getElementById('indexPage').style.display = 'block';
-                getPaymentDue();
-              }
-              // If user is logged in, no action is needed. They can continue using the page.
-          })
-          .catch(error => {
-             console.error('There was an error checking the login status:', error);
-          });
-      }
+      checkLogin();
+      getPaymentDue();
     </script>
     <div class="">            
       <section class="relative"><nav class="flex items-center p-8 bg-gray-700 mb-3"><div class="w-full xl:w-auto px-2 xl:mr-12">

@@ -7,12 +7,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="css/tailwind/tailwind.min.css">
+    <link rel="stylesheet" href="css/tailwind/customstyle.css">
     <link rel="icon" type="image/png" sizes="32x32" href="images/Logo.png">
     <script src="js/main.js"></script>
+    <script src="js/Payment.js"></script>
 </head>
-<body class="antialiased bg-body text-body font-body">
-    <div class="">
-                
+<body class="antialiased bg-body text-body font-body" style="display: none;">
+  <script>
+    checkLogin();
+  </script>
+    <div class="">               
       <section class="relative"><nav class="flex items-center p-8 bg-gray-700 mb-3"><div class="w-full xl:w-auto px-2 xl:mr-12">
             <div class="flex items-center justify-between">
               <a class="inline-flex items-center h-8" href="index.html">
@@ -66,10 +70,9 @@
                       </svg>
                     </div>
                     <div>
-                      <h5 class="text-xs text-gray-300 leading-6 font-semibold">Average Monthly Payment</h5>
+                      <h5 class="text-xs text-gray-300 leading-6 font-semibold">Payment made this month</h5>
                       <div class="flex items-end leading-none text-gray-100 font-semibold">
-                        <span class="text-2xl">$65</span>
-                        <span class="text-sm pb-1">/month</span>
+                        <span id="averagePaymentValue"class="text-2xl">$0</span>
                       </div>
                     </div>
                   </div>
@@ -93,31 +96,11 @@
                   </a>
                 </div>
               </div>
-              <div class="pb-6 mb-6 border-b border-gray-400">
-                <div class="flex flex-wrap items-center justify-between -mx-4 -mb-5">
-                  <div class="w-full sm:w-auto px-4 mb-5">
-                    <div class="flex items-center">
-                      <img class="h-12 w-17 mr-4 self-start" src="trizzle-assets/logos/visa-logo.svg" alt="">
-                      <div>
-                        <h5 class="text-sm text-gray-100 leading-5 font-semibold">Visa ending in 3456</h5>
-                        <span class="text-xs text-gray-300 font-medium">Expires 04/2028</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="w-full sm:w-auto px-4 mb-5"><a class="inline-block ml-auto px-2 py-1 text-xs leading-6 text-gray-200 font-bold bg-gray-600 hover:bg-gray-700 rounded-lg transition duration-100" href="#">Default</a></div>
-                </div>
-              </div>
-              <div>
-                <div class="flex items-center">
-                  <img class="h-12 w-17 mr-4 self-start" src="trizzle-assets/logos/card-logo.svg" alt="">
-                  <div>
-                    <h5 class="text-sm text-gray-100 leading-5 font-semibold">Visa ending in 3456</h5>
-                    <span class="text-xs text-gray-300 font-medium">Expires 04/2028</span>
-                  </div>
-                </div>
-              </div>
+              <div id="paymentMethodsContainer" class="px-10 pt-6 pb-10 mb-6 bg-gray-500 rounded-xl">
+                <!-- JavaScript will append cards here -->
+              </div>              
             </div>
-            <div class="p-6 mb-10 bg-gray-500 rounded-xl">
+            <div id="paymentLedgerContainer" class="p-6 mb-10 bg-gray-500 rounded-xl">
               <h4 class="text-lg text-gray-100 font-semibold mb-6">Ledger</h4>
               
             </div>
@@ -138,6 +121,10 @@
     <script>
       // Use the logoutUser function from navbar.js when the logout button is clicked
       document.getElementById('logoutButton').addEventListener('click', logoutUser);
+      getPaymentsMadeThisMonth();
+      loadPaymentMethods();
+      loadPaymentHistory();
+
     </script>
     <script>
       document.addEventListener('DOMContentLoaded', function() {

@@ -63,3 +63,22 @@ function showDropdown() {
     dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
 }
 
+function checkLogin(){
+    window.onload = function() {
+        fetch('http://localhost:5000/login/checkLogin', { credentials: 'include' })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.loggedin) {
+                window.location.href = 'login.html';
+            }
+            else{
+                document.body.style.display = 'block';
+            }
+            // If user is logged in, no action is needed. They can continue using the page.
+        })
+        .catch(error => {
+           console.error('There was an error checking the login status:', error);
+        });
+    }
+}
+

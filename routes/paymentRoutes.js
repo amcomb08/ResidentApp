@@ -4,7 +4,7 @@ const db = require('./db');
 
 router.post('/makePayment', (req, res) => {
     const userID = req.session.userId;
-    const { paymentMethod,paymentAmount } = req.body; // The amount of payment to make
+    const { paymentAmount } = req.body; // The amount of payment to make
 
     if (!userID) {
         return res.status(401).json({ success: false, message: 'User not logged in' });
@@ -101,7 +101,7 @@ router.get('/getPaymentMethods', (req, res) => {
         return res.status(401).json({ success: false, message: 'User not logged in' });
     }
 
-    const getPaymentMethodsQuery = 'SELECT CardID, CardNickname FROM PaymentMethods WHERE UserID = ?';
+    const getPaymentMethodsQuery = 'SELECT CardID, CardNickname, Expiry, CardNum, NameOnCard FROM PaymentMethods WHERE UserID = ?';
 
     db.query(getPaymentMethodsQuery, [userID], (err, paymentMethodsResults) => {
         if (err) {
@@ -114,6 +114,84 @@ router.get('/getPaymentMethods', (req, res) => {
 
         // Sending the payment methods directly
         return res.json({ success: true, paymentMethods: paymentMethodsResults });
+    });
+});
+
+router.get('/getPaymentHistory', (req, res) => {
+    const userID = req.session.userId;
+    console.log('User ID:', userID);
+
+    if (!userID) {
+        return res.status(401).json({ success: false, message: 'User not logged in' });
+    }
+
+    const getPaymentHistoryQuery = 'SELECT Amount, Status, Date, NameOnCard, CardNum FROM PaymentsMade WHERE UserID = ?';
+
+    db.query(getPaymentHistoryQuery, [userID], (err, paymentHistoryResults) => {
+        if (err) {
+            console.error('Database error:', err);
+            return res.json({ success: false, message: 'Database error occurred.' });
+        }
+        if (paymentHistoryResults.length === 0) {
+            return res.json({ success: false, message: 'No payment methods found.' });
+        }
+
+        // Sending the payment methods directly
+        return res.json({ success: true, paymentHistory: paymentHistoryResults });
+    });
+});
+
+router.post('/deletePaymentMethod', (req, res) => {
+    const userID = req.session.userId;
+    const {cardID} = req.body; // The amount of payment to make
+    if (!userID) {
+        return res.status(401).json({ success: false, message: 'User not logged in' });
+    }
+
+    const getPaymentMethodsQuery = 'DELETE FROM PaymentMethods WHERE CardID = ?';
+
+    db.query(getPaymentMethodsQuery, [cardID], (err, paymentMethodsResults) => {
+        if (err) {
+            console.error('Database error:', err);
+            return res.json({ success: false, message: 'Database error occurred.' });
+        }
+        if (paymentMethodsResults.length === 0) {
+            return res.json({ success: false, message: 'No payment methods found.' });
+        }
+
+        // Sending the payment methods directly
+        return res.json({ success: true, paymentMethods: paymentMethodsResults });
+    });
+});
+
+router.get('/getPaymentsMadeThisMonth', (req, res) => {
+    const userID = req.session.userId;
+    console.log('User ID:', userID);
+
+    if (!userID) {
+        return res.status(401).json({ success: false, message: 'User not logged in' });
+    }
+
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth() + 1; 
+    
+    const query = `
+    SELECT Amount 
+    FROM PaymentsMade 
+    WHERE UserID = ? 
+    AND YEAR(Date) = ? 
+    AND MONTH(Date) = ?`;
+    
+    db.query(query, [userID, currentYear, currentMonth], (err, results) => {
+        if (err) {
+            console.error('Database error:', err);
+            return res.json({ success: false, message: 'Database error occurred.' });
+        }
+        if (results.length === 0) {
+            return res.json({ success: false, message: 'No payments made this month.' });
+        }
+        // Process and send the results as needed
+        return res.json({ success: true, paymentsMadeThisMonth: results });
     });
 });
 
@@ -213,33 +291,35 @@ router.post('/updatePaymentHistory', (req, res) => {
     if (!req.session || !req.session.userId) {
         return res.json({ success: false, message: 'User is not logged in.' });
     }
-    const {paymentMethod, paymentAmount, paymentNote, paymentDate} = req.body;
+    const {paymentAmount, paymentNote, paymentDate, paymentNameOnCard, paymentCardNumber} = req.body;
 
-    const userID = req.session.userId; // Obtain UserID from the session
-    const userApartment = req.session.apartmentNumber; // Obtain UserApartment from the session
+    const userID = req.session.userId;
+    const userApartment = req.session.apartmentNumber; 
 
     // Construct the insert query
     const insertQuery = `
         INSERT INTO PaymentsMade (
-            PaymentMethodID,
             UserID,
             ApartmentNumber,
             Amount,
             Status,
             Date,
-            Notes
-        ) VALUES (?, ?, ?, ?, ?, ?, ?)
+            Notes,
+            NameOnCard,
+            CardNum
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     // Execute the insert query
     db.query(insertQuery, [
-        paymentMethod,
         userID,
         userApartment,
         paymentAmount,
         'Paid',
         paymentDate,
-        paymentNote
+        paymentNote,
+        paymentNameOnCard,
+        paymentCardNumber
     ], (err, results) => {
         if (err) {
             console.error('Database insert error:', err);
