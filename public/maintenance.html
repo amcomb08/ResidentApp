@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="css/tailwind/tailwind.min.css">
     <link rel="icon" type="image/png" sizes="32x32" href="images/Logo.png">
     <script src="js/main.js"></script>
+    <script src="js/messages.js"></script>
 </head>
 <body class="antialiased bg-body text-body font-body" style="display: none;">
   <script>
@@ -65,51 +66,53 @@
             <div class="w-full lg:w-2/3 px-4">
               <div class="px-8 md:px-16 pt-16 pb-8 bg-gray-500 rounded-xl">
                 <div class="max-w-xl mx-auto">
-                  <form action="">
+                  <form id="maintenanceRequest">
                     <div class="flex flex-wrap -mx-4 -mb-10">
                       <div class="w-full md:w-1/2 px-4 mb-10">
                         <div class="relative w-full h-14 py-4 px-3 border border-gray-400 hover:border-white focus-within:border-green-500 rounded-lg">
                           <span class="absolute bottom-full left-0 ml-3 -mb-1 transform translate-y-0.5 text-xs font-semibold text-gray-300 px-1 bg-gray-500">First Name</span>
-                          <input class="block w-full outline-none bg-transparent text-gray-50 placeholder-gray-50 font-semibold" id="formInput2-1" type="text" placeholder="John">
+                          <input class="block w-full outline-none bg-transparent text-gray-50 placeholder-gray-50 font-semibold" id="maintenance_req_fn" type="text" placeholder="">
       </div>
                       </div>
                       <div class="w-full md:w-1/2 px-4 mb-10">
                         <div class="relative w-full h-14 py-4 px-3 border border-gray-400 hover:border-white focus-within:border-green-500 rounded-lg">
                           <span class="absolute bottom-full left-0 ml-3 -mb-1 transform translate-y-0.5 text-xs font-semibold text-gray-300 px-1 bg-gray-500">Last Name</span>
-                          <input class="block w-full outline-none bg-transparent text-gray-50 placeholder-gray-50 font-semibold" id="formInput2-2" type="text" placeholder="Doe">
+                          <input class="block w-full outline-none bg-transparent text-gray-50 placeholder-gray-50 font-semibold" id="maintenance_req_ln" type="text" placeholder="">
       </div>
                       </div>
                       <div class="w-full md:w-1/2 px-4 mb-10">
                         <div class="relative w-full h-14 py-4 px-3 border border-gray-400 hover:border-white focus-within:border-green-500 rounded-lg">
                           <span class="absolute bottom-full left-0 ml-3 -mb-1 transform translate-y-0.5 text-xs font-semibold text-gray-300 px-1 bg-gray-500">Email</span>
-                          <input class="block w-full outline-none bg-transparent text-gray-50 placeholder-gray-50 font-semibold" id="formInput2-3" type="email" placeholder="johndoe@trizzle.ui">
+                          <input class="block w-full outline-none bg-transparent text-gray-50 placeholder-gray-50 font-semibold" id="maintenance_req_email" type="email" placeholder="">
       </div>
                       </div>
                       <div class="w-full md:w-1/2 px-4 mb-10">
                         <div class="relative w-full h-14 py-4 px-3 border border-gray-400 hover:border-white focus-within:border-green-500 rounded-lg">
                           <span class="absolute bottom-full left-0 ml-3 -mb-1 transform translate-y-0.5 text-xs font-semibold text-gray-300 px-1 bg-gray-500">Phone</span>
-                          <input class="block w-full outline-none bg-transparent text-gray-50 placeholder-gray-50 font-semibold" id="formInput2-4" type="text" placeholder="555 664 34 15">
+                          <input class="block w-full outline-none bg-transparent text-gray-50 placeholder-gray-50 font-semibold" id="maintenance_req_phone" type="text" placeholder="">
       </div>
                       </div>
                       <div class="relative w-full h-14 py-4 px-3 mb-8 border border-gray-400 hover:border-white focus-within:border-green-500 rounded-lg">
                         <span class="absolute bottom-full left-0 ml-3 -mb-1 transform translate-y-0.5 text-xs font-semibold text-gray-300 px-1 bg-gray-600">Type of Request</span>
-                        <select class="block w-full outline-none bg-transparent text-sm text-gray-100 font-medium" name="field-name"><option>Option 1</option>
-      <option>Option 2</option>
-      <option>Option 3</option>
-      <option>Option 4</option></select><div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                        <select id="maintenance_req_type" class="block w-full outline-none bg-transparent text-sm text-gray-100 font-medium" name="field-name"><option>Electrical Issue</option>
+                                                                                                                                    <option>Plumbing Issue</option>
+                                                                                                                                    <option>HVAC Issue</option>
+                                                                                                                                    <option>Repairs</option>
+                                                                                                                                    <option>Pests</option>
+                                                                                                                                    <option>Other</option></select><div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
                           <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"></path></svg>
       </div>
                       </div>
                       <div class="w-full px-4 mb-10">
                         <div class="relative w-full py-4 px-3 border border-gray-400 hover:border-white focus-within:border-green-500 rounded-lg">
                           <span class="absolute bottom-full left-0 ml-3 -mb-1 transform translate-y-0.5 text-xs font-semibold text-gray-300 px-1 bg-gray-500">Comments</span>
-                          <textarea class="block w-full h-64 outline-none bg-transparent text-gray-50 placeholder-gray-50 font-semibold resize-none" id="formInput2-5" name="" cols="30" rows="10" placeholder="Lorem ipsum dolor sit amet"></textarea>
+                          <textarea class="block w-full h-64 outline-none bg-transparent text-gray-50 placeholder-gray-50 font-semibold resize-none" id="maintenance_req_detail" name="" cols="30" rows="10" placeholder=""></textarea>
       </div>
                       </div>
                       <div class="w-full px-4 mb-10"></div>
                     </div>
                     <div class="mt-8 text-right">
-                      <button class="inline-block py-2 px-4 mb-2 text-xs text-center font-semibold leading-6 text-blue-50 bg-blue-500 hover:bg-blue-600 rounded-lg transition duration-200" type="submit">Save</button>
+                      <button class="inline-block py-2 px-4 mb-2 text-xs text-center font-semibold leading-6 text-blue-50 bg-blue-500 hover:bg-blue-600 rounded-lg transition duration-200" type="submit">Submit</button>
                     </div>
                   </form>
                 </div>
@@ -122,8 +125,6 @@
         </div>
       </section>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <script src="js/charts-demo.js"></script>
     <script>
       // Use the logoutUser function from navbar.js when the logout button is clicked
       document.getElementById('logoutButton').addEventListener('click', logoutUser);
@@ -140,6 +141,11 @@
             if (dropdownMenu.style.display === 'block' && !dropdownMenu.contains(event.target) && event.target.id !== 'all-options-link') {
                 dropdownMenu.style.display = 'none'; // Hide the dropdown
             }
+        });
+
+        document.getElementById('maintenanceRequest').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          sendMaintenanceRequest();
         });
       });
     </script>

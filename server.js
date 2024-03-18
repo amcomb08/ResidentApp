@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const e = require('express');
 const paymentRoutes = require('./routes/paymentRoutes');
 const loginRoutes = require('./routes/loginRoutes');
+const messageRoutes = require('./routes/messageRoutes');
 
 const app = express();
 const port = 5000;
@@ -55,6 +56,7 @@ app.use(express.json()); // To handle JSON payloads
 const db = require('./routes/db');
 app.use('/payments', paymentRoutes);
 app.use('/login', loginRoutes);
+app.use('/message', messageRoutes);
 
 // Logout
 app.post('/logout', (req, res) => {
