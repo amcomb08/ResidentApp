@@ -29,7 +29,43 @@ async function sendMaintenanceRequest() {
     
     if (data.success) {
         document.cookie = "authenticated=true; path=/";
-        window.location = 'index.html';
+        window.location = './index.html';
+    } else {
+        alert(data.message);
+    }
+}
+
+async function sendContactMessage() {
+    let fields = {
+        firstName: document.getElementById('contact-fn').value,
+        lastName: document.getElementById('contact-ln').value,
+        email: document.getElementById('contact-email').value,
+        phone: document.getElementById('contact-phone').value,
+        message: document.getElementById('contact-message').value
+    };
+    
+    // Check for empty fields and alert the user
+    for (let fieldName in fields) {
+        if (fields[fieldName].trim() === '') {
+            alert(fieldName + ' cannot be empty.');
+            return;
+        }
+    }
+    
+    // If all fields are filled, proceed with the fetch request
+    let response = await fetch('http://localhost:5000/message/send-contact-message', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(fields),
+        credentials: 'include' 
+    });
+    
+    let data = await response.json();
+    console.log(data.success);
+    
+    if (data.success) {
+        document.cookie = "authenticated=true; path=/";
+        window.location = './index.html';
     } else {
         alert(data.message);
     }

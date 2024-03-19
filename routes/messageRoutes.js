@@ -46,4 +46,35 @@ router.post('/send-maintenance-request', (req, res) => {
         });
 });
 
+router.post('/send-contact-message', (req, res) => {
+    const { firstName, lastName, email, phone, message } = req.body;
+    const apartment = req.session.apartmentNumber;
+
+        // Define mail options
+        const mailOptions = {
+            from: 'CSE696ResidentApp@gmail.com',
+            to: 'amcombs2000@gmail.com',
+            subject: "Contact Message",
+            text: `${firstName} ${lastName} from apartment ${apartment} has requested to contact you. The details are as follows: ${message}. You can contact them at ${email} or ${phone}`
+        };
+
+        // Send email with the token
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error('Error sending email:', error);
+                return res.json({ success: false, message: 'Failed to send email.' });
+            }
+
+            // Store the token in the database
+            //const query = 'INSERT INTO ResetToken (Email, ResetToken) VALUES (?, ?) ON DUPLICATE KEY UPDATE ResetToken = ?';
+            //db.query(query, [email, resetToken, resetToken], (dbError, dbResults) => {
+            //    if (dbError) {
+            //        console.error('Error saving reset token to database:', dbError);
+           //         return res.json({ success: false, message: 'Failed to save reset token.' });
+            //    }
+            //    return res.json({ success: true, message: 'Reset token sent to email.' });
+            //});
+        });
+});
+
 module.exports = router;
