@@ -63,12 +63,12 @@ function showDropdown() {
     dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
 }
 
-function checkLogin(){
+function checkLogin(role){
     window.onload = function() {
         fetch('http://localhost:5000/login/checkLogin', { credentials: 'include' })
         .then(response => response.json())
         .then(data => {
-            if (!data.loggedin) {
+            if (!data.loggedin || (data.userRole !== role && data.userRole !== 'DevTest' && data.userRole !== 'AnyUser')) {
                 window.location.href = 'login.html';
             }
             else{
@@ -81,23 +81,3 @@ function checkLogin(){
         });
     }
 }
-
-function checkAdminLogin(){
-    window.onload = function() {
-        fetch('http://localhost:5000/login/checkAdminLogin', { credentials: 'include' })
-        .then(response => response.json())
-        .then(data => {
-            if (!data.loggedin) {
-                window.location.href = 'login.html';
-            }
-            else{
-                document.body.style.display = 'block';
-            }
-            // If user is logged in, no action is needed. They can continue using the page.
-        })
-        .catch(error => {
-           console.error('There was an error checking the login status. You do not have access to this page', error);
-        });
-    }
-}
-

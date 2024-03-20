@@ -49,18 +49,8 @@ router.post('/login', (req, res) => {
 router.get('/checkLogin', (req, res) => {
     console.log('Session:', req.session); // Log the session data
     
-    if (req.session.loggedin && (req.session.UserRole === 'Resident' || req.session.UserRole === 'DevTest')) {
-        res.json({ loggedin: true });
-    } else {
-        res.json({ loggedin: false });
-    }
-});
-
-router.get('/checkAdminLogin', (req, res) => {
-    console.log('Session:', req.session); // Log the session data
-    
-    if (req.session.loggedin && req.session.UserRole === 'Admin') {
-        res.json({ loggedin: true });
+    if (req.session.loggedin) {
+        res.json({ loggedin: true, userRole: req.session.UserRole});
     } else {
         res.json({ loggedin: false });
     }
