@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="css/tailwind/tailwind.min.css">
     <link rel="icon" type="image/png" sizes="32x32" href="images/Logo.png">
     <script src="js/main.js"></script>
+    <script src="js/reservations.js"></script>
 </head>
 <body class="antialiased bg-body text-body font-body" style="display: none;">
   <script>
@@ -64,12 +65,8 @@
               </div>
               
             </div>
-            <ul class="flex flex-wrap items-center mt-5 lg:mt-4 -mb-2">
-              <li class="mb-2 mr-8"><a class="inline-block py-1.5 px-4 text-sm text-white font-bold leading-6 bg-gray-500 rounded-lg" href="#">Tanning bed</a></li>
-              <li class="mb-2 mr-8"><a class="inline-block py-1.5 px-4 text-sm text-white font-bold leading-6 hover:bg-gray-700 rounded-lg" href="#">Pool table</a></li>
-              <li class="mb-2 mr-8"><a class="inline-block py-1.5 px-4 text-sm text-white font-bold leading-6 hover:bg-gray-700 rounded-lg" href="#">Misc</a></li>
-              <li class="mb-2 mr-8"><a class="inline-block py-1.5 px-4 text-sm text-white font-bold leading-6 hover:bg-gray-700 rounded-lg" href="#">Misc2</a></li>
-              <li class="mb-2"><a class="inline-block py-1.5 px-4 text-sm text-white font-bold leading-6 hover:bg-gray-700 rounded-lg" href="#">Misc3</a></li>
+            <ul id='amenitiesList' class="flex flex-wrap items-center mt-5 lg:mt-4 -mb-2">
+
             </ul>
           </div>
         </div>
@@ -111,7 +108,18 @@
                       <div class="w-full md:w-1/2 px-4 mb-10">
                         <div class="relative w-full h-14 py-4 px-3 border border-gray-400 hover:border-white focus-within:border-green-500 rounded-lg">
                           <span class="absolute bottom-full left-0 ml-3 -mb-1 transform translate-y-0.5 text-xs font-semibold text-gray-300 px-1 bg-gray-500">Date of Reservation</span>
-                          <input class="block w-full outline-none bg-transparent text-gray-50 placeholder-gray-50 font-semibold" id="formInput2-4" type="text" placeholder="" contenteditable="false" name=""></div>
+                          <select class="block w-full outline-none bg-white text-black placeholder-gray-50 font-semibold" id="dateOfReservation" name="dateOfReservation">
+                            <option value="">Select a date</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="w-full md:w-1/2 px-4 mb-10">
+                        <div class="relative w-full h-14 py-4 px-3 border border-gray-400 hover:border-white focus-within:border-green-500 rounded-lg">
+                          <span class="absolute bottom-full left-0 ml-3 -mb-1 transform translate-y-0.5 text-xs font-semibold text-gray-300 px-1 bg-gray-500">Time Slot</span>
+                          <select class="block w-full outline-none bg-white text-black placeholder-gray-50 font-semibold" id="timeSlot" name="timeSlot">
+                            <option value="">Select a time slot</option>
+                          </select>
+                        </div>
                       </div>
                       <div class="w-full px-4 mb-10">
                         <div class="relative w-full py-4 px-3 border border-gray-400 hover:border-white focus-within:border-green-500 rounded-lg">
@@ -132,11 +140,10 @@
         </div>
       </section>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <script src="js/charts-demo.js"></script>
     <script>
       // Use the logoutUser function from navbar.js when the logout button is clicked
       document.getElementById('logoutButton').addEventListener('click', logoutUser);
+      loadAmenities();
     </script>
     <script>
       document.addEventListener('DOMContentLoaded', function() {
@@ -151,6 +158,20 @@
                 dropdownMenu.style.display = 'none'; // Hide the dropdown
             }
         });
+
+        const amenitiesContainer = document.getElementById('amenitiesList');
+        amenitiesContainer.addEventListener('click', function(event) {
+            const amenityId = event.target.getAttribute('data-amenity-id');
+            if (amenityId) {
+                // Clear the "Time Slot" dropdown
+                const timeSlotDropdown = document.getElementById('timeSlot');
+                timeSlotDropdown.length = 1; // Keep only the placeholder option
+
+                // Proceed to fetch the new amenity schedule
+                fetchAmenitySchedule(amenityId);
+            }
+        });
+
       });
     </script>
 </body>

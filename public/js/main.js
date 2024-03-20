@@ -46,7 +46,7 @@ function logoutUser() {
     .then(data => {
         if (data.success) {
             // Redirect to login page on successful logout
-            window.location.href = './login.html';
+            window.location.href = '../login.html';
         } else {
             // Handle any errors or unsuccessful logout attempts
             console.error('Logout failed:', data.message);
@@ -78,6 +78,25 @@ function checkLogin(){
         })
         .catch(error => {
            console.error('There was an error checking the login status:', error);
+        });
+    }
+}
+
+function checkAdminLogin(){
+    window.onload = function() {
+        fetch('http://localhost:5000/login/checkAdminLogin', { credentials: 'include' })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.loggedin) {
+                window.location.href = 'login.html';
+            }
+            else{
+                document.body.style.display = 'block';
+            }
+            // If user is logged in, no action is needed. They can continue using the page.
+        })
+        .catch(error => {
+           console.error('There was an error checking the login status. You do not have access to this page', error);
         });
     }
 }

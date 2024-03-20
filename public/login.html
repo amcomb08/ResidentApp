@@ -56,7 +56,11 @@
             console.log(data.success);
             if (data.success) {
                 document.cookie = "authenticated=true; path=/";  // Set the authenticated cookie
-                window.location = 'index.html';
+                if (data.userRole === "Admin") {
+                  window.location = '/adminpages/adminindex.html';
+                } else {
+                  window.location = 'index.html';
+                }
             } else {
                 alert(data.message);
             }

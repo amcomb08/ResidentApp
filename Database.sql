@@ -101,6 +101,31 @@ CREATE TABLE UserDocuments (
     FOREIGN KEY (UserID) REFERENCES UserAccounts(UserID)
 );
 
+CREATE TABLE Amenities (
+    AmenityID INT AUTO_INCREMENT PRIMARY KEY,
+    AmenityName VARCHAR(255) NOT NULL,
+    Description TEXT,
+    CONSTRAINT UC_AmenityName UNIQUE (AmenityName)
+);
 
+CREATE TABLE AmenitySchedules (
+    ScheduleID INT AUTO_INCREMENT PRIMARY KEY,
+    AmenityID INT,
+    StartTime TIME NOT NULL,
+    EndTime TIME NOT NULL,
+    Date DATE NOT NULL,
+    FOREIGN KEY (AmenityID) REFERENCES Amenities(AmenityID)
+);
+
+CREATE TABLE Reservations (
+    ReservationID INT AUTO_INCREMENT PRIMARY KEY,
+    UserID INT,
+    ScheduleID INT,
+    ReservationTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    Status ENUM('confirmed', 'cancelled') NOT NULL,
+    FOREIGN KEY (UserID) REFERENCES UserAccounts(UserID),
+    FOREIGN KEY (ScheduleID) REFERENCES AmenitySchedules(ScheduleID),
+    UNIQUE KEY unique_reservation (UserID, ScheduleID)
+);
 
 

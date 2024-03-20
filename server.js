@@ -9,6 +9,7 @@ const e = require('express');
 const paymentRoutes = require('./routes/paymentRoutes');
 const loginRoutes = require('./routes/loginRoutes');
 const messageRoutes = require('./routes/messageRoutes');
+const reservationRoutes = require('./routes/reservationRoutes');
 
 const app = express();
 const port = 5000;
@@ -57,6 +58,7 @@ const db = require('./routes/db');
 app.use('/payments', paymentRoutes);
 app.use('/login', loginRoutes);
 app.use('/message', messageRoutes);
+app.use('/reservation', reservationRoutes);
 
 // Logout
 app.post('/logout', (req, res) => {

@@ -31,8 +31,9 @@ router.post('/login', (req, res) => {
                     req.session.loggedin = true;
                     req.session.Email = Email;
                     req.session.userId = user.UserID;
+                    req.session.UserRole = user.UserRole;
                     console.log("After Login Session:", req.session);
-                    res.json({ success: true });
+                    res.json({ success: true, userRole: user.UserRole});
                     console.log("Immediately after setting:", req.session.loggedin);
                 } else {
                     res.json({ success: false, message: 'Incorrect Password!' });
@@ -48,7 +49,17 @@ router.post('/login', (req, res) => {
 router.get('/checkLogin', (req, res) => {
     console.log('Session:', req.session); // Log the session data
     
-    if (req.session.loggedin) {
+    if (req.session.loggedin && (req.session.UserRole === 'Resident' || req.session.UserRole === 'DevTest')) {
+        res.json({ loggedin: true });
+    } else {
+        res.json({ loggedin: false });
+    }
+});
+
+router.get('/checkAdminLogin', (req, res) => {
+    console.log('Session:', req.session); // Log the session data
+    
+    if (req.session.loggedin && req.session.UserRole === 'Admin') {
         res.json({ loggedin: true });
     } else {
         res.json({ loggedin: false });
