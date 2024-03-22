@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="css/tailwind/tailwind.min.css">
     <link rel="icon" type="image/png" sizes="32x32" href="images/Logo.png">
     <script src="js/main.js"></script>
+    <script src="js/messages.js"></script>
 </head>
 <body class="antialiased bg-body text-body font-body" style="display: none;">
   <script>
@@ -76,39 +77,9 @@
               </div>
             </div>
             <div class="h-1 w-full mb-4 rounded-full bg-purple-500"></div>
-            <a class="block p-4 mb-4 bg-gray-600 rounded-xl hover:bg-gray-700 transition duration-200" href="#">
-              <h4 class="text-white font-semibold leading-6 mb-1">Event</h4>
-              <div class="flex items-center mb-4">
-                <span class="h-2 w-2 mr-1 bg-pink-400 rounded-full"></span>
-                <span class="text-xs font-medium text-pink-400">Location</span>
-              </div>
-              <p class="text-xs text-gray-300 leading-normal mb-10">Description</p>
-              <div class="pt-4 border-t border-gray-500">
-                <div class="flex flex-wrap items-center justify-between -m-2">
-                  <div class="w-auto p-2">
-                    <div class="flex items-center p-2 bg-gray-500 rounded-md">
-                      <svg width="14" height="14" viewbox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M11.0001 2.33337H3.00008C2.2637 2.33337 1.66675 2.93033 1.66675 3.66671V11.6667C1.66675 12.4031 2.2637 13 3.00008 13H11.0001C11.7365 13 12.3334 12.4031 12.3334 11.6667V3.66671C12.3334 2.93033 11.7365 2.33337 11.0001 2.33337Z" stroke="#3D485B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                        <path d="M9.66675 1V3.66667" stroke="#3D485B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                        <path d="M4.3335 1V3.66667" stroke="#3D485B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                        <path d="M1.66675 6.33337H12.3334" stroke="#3D485B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                        <path d="M6.3335 9H7.00016" stroke="#3D485B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                        <path d="M7 9V11" stroke="#3D485B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                      </svg>
-                      <span class="ml-2 text-xs font-medium text-gray-200">Jul 03</span>
-                    </div>
-                  </div>
-                  <div class="w-auto p-2">
-                    <div class="flex h-full items-center">
-                      
-                      
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </a>
-            
-            
+            <div id="eventsContainer">
+
+            </div>                   
           </div>
         </div>
       </section>
@@ -118,8 +89,7 @@
           <div class="px-4 pt-6 pb-24 bg-gray-500 rounded-xl">
             <div class="flex items-center justify-between mb-3">
               <div class="flex items-center">
-                <h3 class="text-lg text-white font-semibold mr-2">Announcements</h3>
-                
+                <h3 class="text-lg text-white font-semibold mr-2">Announcements</h3>                
               </div>
               <div>
                 <button class="inline-block mr-2 text-gray-400 hover:text-gray-300">
@@ -135,29 +105,9 @@
               </div>
             </div>
             <div class="h-1 w-full mb-4 rounded-full bg-purple-500"></div>
-            <a class="block p-4 mb-4 bg-gray-600 rounded-xl hover:bg-gray-700 transition duration-200" href="#">
-              <h4 class="text-white font-semibold leading-6 mb-1">Announcement</h4>
-              <div class="flex items-center mb-4">
-                
-                
-              </div>
-              <p class="text-xs text-gray-300 leading-normal mb-10">This is an example task that can be used within a Kanban system.</p>
-              <div class="pt-4 border-t border-gray-500">
-                <div class="flex flex-wrap items-center justify-between -m-2">
-                  <div class="w-auto p-2">
-                    
-                  </div>
-                  <div class="w-auto p-2">
-                    <div class="flex h-full items-center">
-                      
-                      
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </a>
-            
-            
+            <div id="announcementsContainer">
+
+            </div>
           </div>
         </div>
       </section>
@@ -167,6 +117,8 @@
     <script>
       // Use the logoutUser function from navbar.js when the logout button is clicked
       document.getElementById('logoutButton').addEventListener('click', logoutUser);
+      getEvents();
+      getAnnoucements();
     </script>
     <script>
       document.addEventListener('DOMContentLoaded', function() {

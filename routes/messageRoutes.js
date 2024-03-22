@@ -33,16 +33,6 @@ router.post('/send-maintenance-request', (req, res) => {
                 console.error('Error sending email:', error);
                 return res.json({ success: false, message: 'Failed to send email.' });
             }
-
-            // Store the token in the database
-            //const query = 'INSERT INTO ResetToken (Email, ResetToken) VALUES (?, ?) ON DUPLICATE KEY UPDATE ResetToken = ?';
-            //db.query(query, [email, resetToken, resetToken], (dbError, dbResults) => {
-            //    if (dbError) {
-            //        console.error('Error saving reset token to database:', dbError);
-           //         return res.json({ success: false, message: 'Failed to save reset token.' });
-            //    }
-            //    return res.json({ success: true, message: 'Reset token sent to email.' });
-            //});
         });
 });
 
@@ -64,17 +54,53 @@ router.post('/send-contact-message', (req, res) => {
                 console.error('Error sending email:', error);
                 return res.json({ success: false, message: 'Failed to send email.' });
             }
-
-            // Store the token in the database
-            //const query = 'INSERT INTO ResetToken (Email, ResetToken) VALUES (?, ?) ON DUPLICATE KEY UPDATE ResetToken = ?';
-            //db.query(query, [email, resetToken, resetToken], (dbError, dbResults) => {
-            //    if (dbError) {
-            //        console.error('Error saving reset token to database:', dbError);
-           //         return res.json({ success: false, message: 'Failed to save reset token.' });
-            //    }
-            //    return res.json({ success: true, message: 'Reset token sent to email.' });
-            //});
         });
 });
+
+router.get('/get-events', (req, res) => {
+    // You may or may not need to check for a user session, depending on whether this data should be public
+    if (!req.session || !req.session.userId) {
+        return res.status(401).json({ success: false, message: 'User not logged in' });
+    }
+
+    const getEventsQuery = 'SELECT * FROM Events'; // Adjust if you need specific columns only
+
+    db.query(getEventsQuery, (err, eventsResults) => {
+        if (err) {
+            console.error('Error fetching events:', err);
+            return res.json({ success: false, message: 'Failed to fetch events.' });
+        }
+
+        // If you get results, send them back to the client
+        if (eventsResults.length > 0) {
+            return res.json({ success: true, events: eventsResults });
+        } else {
+            return res.json({ success: false, message: 'No events found.' });
+        }
+    });
+});
+
+router.get('/get-announcements', (req, res) => {
+    if (!req.session || !req.session.userId) {
+        return res.status(401).json({ success: false, message: 'User not logged in' });
+    }
+
+    const getAnnouncementsQuery = 'SELECT * FROM Announcements';
+
+    db.query(getAnnouncementsQuery, (err, announcementResults) => {
+        if (err) {
+            return res.status(500).json({ success: false, message: 'Failed to retrieve announcements.' });
+        }
+
+        // If you get results, send them back to the client
+        if (announcementResults.length > 0) {
+            return res.json({ success: true, announcements: announcementResults });
+        } else {
+            return res.json({ success: false, message: 'No events found.' });
+        }
+    });
+});
+
+
 
 module.exports = router;

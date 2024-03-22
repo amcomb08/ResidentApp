@@ -134,4 +134,18 @@ CREATE TABLE Reservations (
     UNIQUE KEY unique_reservation (UserID, ScheduleID)
 );
 
+CREATE TABLE Events (
+    EventID INT AUTO_INCREMENT PRIMARY KEY,
+    EventName VARCHAR(255) NOT NULL,
+    EventLocation VARCHAR(255) NOT NULL,
+    EventDate DATE NOT NULL,
+    EventDescription TEXT NOT NULL
+);
+
+CREATE TABLE Announcements (
+    AnnouncementID INT AUTO_INCREMENT PRIMARY KEY,
+    AnnouncementHeader VARCHAR(255) NOT NULL,
+    AnnouncementDetail TEXT NOT NULL
+);
+
 
