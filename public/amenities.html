@@ -88,22 +88,22 @@
                       <div class="w-full md:w-1/2 px-4 mb-10">
                         <div class="relative w-full h-14 py-4 px-3 border border-gray-400 hover:border-white focus-within:border-green-500 rounded-lg" contenteditable="false">
                           <span class="absolute bottom-full left-0 ml-3 -mb-1 transform translate-y-0.5 text-xs font-semibold text-gray-300 px-1 bg-gray-500">First Name</span>
-                          <input class="block w-full outline-none bg-transparent text-gray-50 placeholder-gray-50 font-semibold" id="formInput2-1" type="text" placeholder="" contenteditable="false" name=""></div>
+                          <input class="block w-full outline-none bg-transparent text-gray-50 placeholder-gray-50 font-semibold" id="userFN" type="text" placeholder="" contenteditable="false" name=""></div>
                       </div>
                       <div class="w-full md:w-1/2 px-4 mb-10">
                         <div class="relative w-full h-14 py-4 px-3 border border-gray-400 hover:border-white focus-within:border-green-500 rounded-lg">
                           <span class="absolute bottom-full left-0 ml-3 -mb-1 transform translate-y-0.5 text-xs font-semibold text-gray-300 px-1 bg-gray-500">Last Name</span>
-                          <input class="block w-full outline-none bg-transparent text-gray-50 placeholder-gray-50 font-semibold" id="formInput2-2" type="text" placeholder="" name=""></div>
+                          <input class="block w-full outline-none bg-transparent text-gray-50 placeholder-gray-50 font-semibold" id="userLN" type="text" placeholder="" name=""></div>
                       </div>
                       <div class="w-full md:w-1/2 px-4 mb-10">
                         <div class="relative w-full h-14 py-4 px-3 border border-gray-400 hover:border-white focus-within:border-green-500 rounded-lg">
                           <span class="absolute bottom-full left-0 ml-3 -mb-1 transform translate-y-0.5 text-xs font-semibold text-gray-300 px-1 bg-gray-500">Email</span>
-                          <input class="block w-full outline-none bg-transparent text-gray-50 placeholder-gray-50 font-semibold" id="formInput2-3" type="email" placeholder="" name=""></div>
+                          <input class="block w-full outline-none bg-transparent text-gray-50 placeholder-gray-50 font-semibold" id="userEmail" type="email" placeholder="" name=""></div>
                       </div>
                       <div class="w-full md:w-1/2 px-4 mb-10">
                         <div class="relative w-full h-14 py-4 px-3 border border-gray-400 hover:border-white focus-within:border-green-500 rounded-lg">
                           <span class="absolute bottom-full left-0 ml-3 -mb-1 transform translate-y-0.5 text-xs font-semibold text-gray-300 px-1 bg-gray-500">Phone</span>
-                          <input class="block w-full outline-none bg-transparent text-gray-50 placeholder-gray-50 font-semibold" id="formInput2-4" type="text" placeholder="" contenteditable="false" name=""></div>
+                          <input class="block w-full outline-none bg-transparent text-gray-50 placeholder-gray-50 font-semibold" id="userPhone" type="text" placeholder="" contenteditable="false" name=""></div>
                       </div>
                       <div class="w-full md:w-1/2 px-4 mb-10">
                         <div class="relative w-full h-14 py-4 px-3 border border-gray-400 hover:border-white focus-within:border-green-500 rounded-lg">
@@ -124,12 +124,12 @@
                       <div class="w-full px-4 mb-10">
                         <div class="relative w-full py-4 px-3 border border-gray-400 hover:border-white focus-within:border-green-500 rounded-lg">
                           <span class="absolute bottom-full left-0 ml-3 -mb-1 transform translate-y-0.5 text-xs font-semibold text-gray-300 px-1 bg-gray-500" contenteditable="false">Comments</span>
-                          <textarea class="block w-full h-64 outline-none bg-transparent text-gray-50 placeholder-gray-50 font-semibold resize-none" id="formInput2-5" name="" cols="30" rows="10" placeholder="" contenteditable="false"></textarea></div>
+                          <textarea class="block w-full h-64 outline-none bg-transparent text-gray-50 placeholder-gray-50 font-semibold resize-none" id="userComments" name="" cols="30" rows="10" placeholder="" contenteditable="false"></textarea></div>
                       </div>
                       <div class="w-full px-4 mb-10"></div>
                     </div>
                     <div class="mt-8 text-right" contenteditable="false">
-                      <button class="inline-block py-2 px-4 mb-2 text-xs text-center font-semibold leading-6 text-blue-50 bg-blue-500 hover:bg-blue-600 rounded-lg transition duration-200" type="submit">Save</button>
+                      <button class="inline-block py-2 px-4 mb-2 text-xs text-center font-semibold leading-6 text-blue-50 bg-blue-500 hover:bg-blue-600 rounded-lg transition duration-200" type="button" onclick="reserveSlot()">Save</button>
                     </div>
                   </form>
                 </div>

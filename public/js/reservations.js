@@ -1,3 +1,15 @@
+function isValidData(data) {
+
+  for (const key in data) {
+    if (data[key] === '') {
+      return false;
+    }
+  }
+
+  return true; 
+}
+
+
 function loadAmenities() {
     // Fetch the amenities from the server
     fetch('http://localhost:5000/reservation/getAmenities', {
@@ -93,10 +105,52 @@ function populateTimeSlots(schedulesForDate) {
     // Populate the dropdown with time slots for the selected date
     schedulesForDate.forEach(schedule => {
         const option = document.createElement('option');
-        option.value = schedule.ScheduleID; // Assuming you use ScheduleID to identify the booking slot
-        option.textContent = `${schedule.StartTime} - ${schedule.EndTime}`; // Adjust format as needed
+        option.value = schedule.ScheduleID;
+        option.textContent = `${schedule.StartTime} - ${schedule.EndTime}`;
+        console.log(option.value);
         timeSlotDropdown.appendChild(option);
     });
+}
+
+async function reserveSlot() { //Executes once save is clicked on the addpayment page
+
+  const dataToInsert = {
+    FirstName: document.getElementById('userFN').value.trim(),
+    LastName: document.getElementById('userLN').value.trim(),
+    Email: document.getElementById('userEmail').value.trim(),
+    Phone: document.getElementById('userPhone').value.trim(),
+    Date: document.getElementById('dateOfReservation').value.trim(),
+    ScheduleID: document.getElementById('timeSlot').value.trim(),
+  };
+
+  // validate the data
+  if (isValidData(dataToInsert)) {
+    try {
+      // You need to await the fetch call to complete
+      let response = await fetch('http://localhost:5000/reservation/makeReservation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dataToInsert),
+        credentials: 'include'
+      });
+      
+      // Also await the response.json() call to resolve
+      let data = await response.json();
+      
+      if (data.success) {
+        // Handle the success scenario, such as redirecting to a confirmation page
+        window.location = './index.html';
+      } else {
+        // Handle the failure scenario
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred while processing your request.');
+    }
+  } else {
+    alert('Please fill in all the fields');
+  }
 }
 
 

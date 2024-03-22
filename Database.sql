@@ -120,6 +120,7 @@ CREATE TABLE AmenitySchedules (
     StartTime TIME NOT NULL,
     EndTime TIME NOT NULL,
     Date DATE NOT NULL,
+    Reserved BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (AmenityID) REFERENCES Amenities(AmenityID)
 );
 
@@ -127,7 +128,6 @@ CREATE TABLE Reservations (
     ReservationID INT AUTO_INCREMENT PRIMARY KEY,
     UserID INT,
     ScheduleID INT,
-    ReservationTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     Status ENUM('confirmed', 'cancelled') NOT NULL,
     FOREIGN KEY (UserID) REFERENCES UserAccounts(UserID),
     FOREIGN KEY (ScheduleID) REFERENCES AmenitySchedules(ScheduleID),

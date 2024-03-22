@@ -7,7 +7,7 @@ function isValidData(data) {
     }
   
     return true; 
-  }
+}
 
 async function modifyUserClicked(action) { //Executes once save is clicked on the addpayment page
   let dataToInsert = {};
