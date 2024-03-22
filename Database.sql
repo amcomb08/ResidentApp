@@ -37,14 +37,20 @@ CREATE TABLE UserApartments (
 
 
 -- Payments Due Table
+CREATE TABLE ApartmentBalances (
+    ApartmentNumber INT PRIMARY KEY,
+    TotalAmountDue DECIMAL(10, 2)
+);
+
 CREATE TABLE PaymentsDue (
     PaymentDueID INT AUTO_INCREMENT PRIMARY KEY,
     DueDate DATE NOT NULL,
     ApartmentNumber INT NOT NULL,
     PaymentAmount DECIMAL(10, 2) NOT NULL,
+    IsMonthly Bit DEFAULT 0,
+    Comment TEXT NOT NULL,
     FOREIGN KEY (ApartmentNumber) REFERENCES Apartments(ApartmentNumber)
 );
-
 -- Payment Methods Table
 CREATE TABLE PaymentMethods (
     CardID INT AUTO_INCREMENT PRIMARY KEY,

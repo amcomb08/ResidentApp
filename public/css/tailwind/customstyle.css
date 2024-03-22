@@ -14,5 +14,17 @@
   #ledgerPage {
     display: none;
   }
+
+  .hiddenData {
+    display: none;
+  }
+
+  .hiddenMessage {
+    display: none;
+  }
+
+  .highlighted {
+    background-color: #777777; 
+  }
   
   

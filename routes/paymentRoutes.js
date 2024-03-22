@@ -37,7 +37,7 @@ router.post('/makePayment', (req, res) => {
                 }
 
                 const apartmentNumber = userResults[0].ApartmentNumber;
-                const getPaymentDueQuery = 'SELECT PaymentAmount FROM PaymentsDue WHERE ApartmentNumber = ?';
+                const getPaymentDueQuery = 'SELECT TotalAmountDue FROM ApartmentBalances WHERE ApartmentNumber = ?';
                 connection.query(getPaymentDueQuery, [apartmentNumber], (err, userBalanceResults) => {
                     if (err || userBalanceResults.length === 0) {
                         connection.rollback(() => {
@@ -47,7 +47,7 @@ router.post('/makePayment', (req, res) => {
                         return;
                     }
 
-                    const userBalanceNumber = parseFloat(userBalanceResults[0].PaymentAmount);
+                    const userBalanceNumber = parseFloat(userBalanceResults[0].TotalAmountDue);
                     const userAmountNumber = parseFloat(paymentAmount);
                     
                     //Check if the payment amount is greater than the user's balance
@@ -61,8 +61,8 @@ router.post('/makePayment', (req, res) => {
 
                     // Update the PaymentsDue table
                     const updatePaymentQuery = `
-                        UPDATE PaymentsDue
-                        SET PaymentAmount = PaymentAmount - ?
+                        UPDATE ApartmentBalances
+                        SET TotalAmountDue = TotalAmountDue - ?
                         WHERE ApartmentNumber = ?
                     `;
                     connection.query(updatePaymentQuery, [paymentAmount, apartmentNumber], (err, updateResults) => {
@@ -273,14 +273,14 @@ router.get('/getPaymentDue', (req, res) => {
         const apartmentNumber = userResults[0].ApartmentNumber;
         req.session.apartmentNumber = apartmentNumber;
 
-        const getPaymentDueQuery = 'SELECT PaymentAmount FROM PaymentsDue WHERE ApartmentNumber = ?';
+        const getPaymentDueQuery = 'SELECT TotalAmountDue FROM ApartmentBalances WHERE ApartmentNumber = ?';
 
         db.query(getPaymentDueQuery, [apartmentNumber], (err, paymentResults) => {
             if (err || paymentResults.length === 0) {
                 return res.json({ success: false, message: 'Failed to find payment amount.' });
             }
 
-            const paymentAmount = paymentResults[0].PaymentAmount;
+            const paymentAmount = paymentResults[0].TotalAmountDue;
             return res.json({ success: true, paymentAmount: paymentAmount });
         });
     });
