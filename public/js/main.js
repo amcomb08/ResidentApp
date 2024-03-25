@@ -57,9 +57,9 @@ function logoutUser() {
     });
 }
 
-function showDropdown() {
+function showDropdown(type) {
     console.log('showDropdown');
-    var dropdownMenu = document.querySelector('#all-options-link + .dropdown-menu');
+    var dropdownMenu = document.querySelector('#' + type + ' + .dropdown-menu');
     dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
 }
 

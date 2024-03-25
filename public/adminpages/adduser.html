@@ -33,12 +33,21 @@
               </a>
             </li>
             <li class="mr-10"><a class="inline-block text-sm font-semibold text-gray-300 hover:text-gray-200" href="sendpaymentdue.html">Payment Manager</a></li>
-            <li class="mr-10"><a class="inline-block text-sm font-semibold text-gray-300 hover:text-gray-200" href="communitymanager.html">Community Manager</a></li>
-            <li class="relative">
-              <a id="all-options-link" class="inline-block text-sm font-semibold text-gray-300 hover:text-gray-200 cursor-pointer" href="#">All Options</a>
+            <li class="mr-10">
+              <a id="community-manager-link" class="inline-block text-sm font-semibold text-gray-300 hover:text-gray-200 cursor-pointer" href="#">Community Manager</a>
               <!-- Dropdown Menu -->
               <div class="dropdown-menu absolute hidden bg-gray-700 text-white">
-                <a class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600" href="../changepasswordloggedin.html">Change Password</a>
+                <a class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600" href="../changepasswordloggedin.html">Events</a>
+                <a class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600" href="removeuser.html">Annoucment</a>
+                <a class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600" href="removeuser.html">Reservations</a>
+                <!-- Add more links as needed -->
+              </div>
+            </li> 
+            <li class="mr-10">
+              <a id="resident-manager-link" class="inline-block text-sm font-semibold text-gray-300 hover:text-gray-200 cursor-pointer" href="#">Resident Manager</a>
+              <!-- Dropdown Menu -->
+              <div class="dropdown-menu absolute hidden bg-gray-700 text-white">
+                <a class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600" href="adduser.html">Add User</a>
                 <a class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600" href="removeuser.html">Remove User</a>
                 <!-- Add more links as needed -->
               </div>
@@ -155,14 +164,23 @@
       document.getElementById('logoutButton').addEventListener('click', logoutUser);
 
       document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('all-options-link').addEventListener('click', function(event) {
+        document.getElementById('community-manager-link').addEventListener('click', function(event) {
             event.stopPropagation(); // Prevent click from immediately propagating to document
-            showDropdown();
+            showDropdown('community-manager-link');
+        });
+
+        document.getElementById('resident-manager-link').addEventListener('click', function(event) {
+            event.stopPropagation(); // Prevent click from immediately propagating to document
+            showDropdown('resident-manager-link');
         });
 
         document.addEventListener('click', function(event) {
-            var dropdownMenu = document.querySelector('#all-options-link + .dropdown-menu');
-            if (dropdownMenu.style.display === 'block' && !dropdownMenu.contains(event.target) && event.target.id !== 'all-options-link') {
+            var dropdownMenu = document.querySelector('#resident-manager-link + .dropdown-menu');
+            if (dropdownMenu.style.display === 'block' && !dropdownMenu.contains(event.target) && event.target.id !== 'resident-manager-link') {
+                dropdownMenu.style.display = 'none'; // Hide the dropdown
+            }
+            var dropdownMenu = document.querySelector('#community-manager-link + .dropdown-menu');
+            if (dropdownMenu.style.display === 'block' && !dropdownMenu.contains(event.target) && event.target.id !== 'community-manager-link') {
                 dropdownMenu.style.display = 'none'; // Hide the dropdown
             }
         });

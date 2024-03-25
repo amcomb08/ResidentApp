@@ -168,6 +168,8 @@ router.post('/changepasswordwithlink', (req, res) => {
             res.json({ success: false, message: 'Error hashing Password.' });
             return;
         }
+    console.log("hased password:", hashedPassword);
+    console.log("new password:", newpassword);
 
     // Update the user's password in the database with the hashed password
     const query = "UPDATE UserAccounts SET Password = ? WHERE Email = ?";

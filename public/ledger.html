@@ -129,7 +129,7 @@
       document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('all-options-link').addEventListener('click', function(event) {
             event.stopPropagation(); // Prevent click from immediately propagating to document
-            showDropdown();
+            showDropdown('all-options-link');
         });
 
         document.addEventListener('click', function(event) {

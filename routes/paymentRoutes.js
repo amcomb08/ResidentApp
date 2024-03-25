@@ -26,7 +26,7 @@ router.post('/makePayment', (req, res) => {
             }
 
             // Get the user's apartment number
-            const getUserApartmentQuery = 'SELECT ApartmentNumber FROM UserApartments WHERE UserID = ?';
+            const getUserApartmentQuery = 'SELECT ApartmentNumber FROM UserAccounts WHERE UserID = ?';
             connection.query(getUserApartmentQuery, [userID], (err, userResults) => {
                 if (err || userResults.length === 0) {
                     connection.rollback(() => {

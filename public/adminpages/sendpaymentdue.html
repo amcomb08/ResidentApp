@@ -34,12 +34,21 @@
               </a>
             </li>
             <li class="mr-10"><a class="inline-block text-sm font-semibold text-gray-300 hover:text-gray-200" href="sendpaymentdue.html">Payment Manager</a></li>
-            <li class="mr-10"><a class="inline-block text-sm font-semibold text-gray-300 hover:text-gray-200" href="communitymanager.html">Community Manager</a></li>
-            <li class="relative">
-              <a id="all-options-link" class="inline-block text-sm font-semibold text-gray-300 hover:text-gray-200 cursor-pointer" href="#">All Options</a>
+            <li class="mr-10">
+              <a id="community-manager-link" class="inline-block text-sm font-semibold text-gray-300 hover:text-gray-200 cursor-pointer" href="#">Community Manager</a>
               <!-- Dropdown Menu -->
               <div class="dropdown-menu absolute hidden bg-gray-700 text-white">
-                <a class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600" href="../changepasswordloggedin.html">Change Password</a>
+                <a class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600" href="../changepasswordloggedin.html">Events</a>
+                <a class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600" href="removeuser.html">Annoucment</a>
+                <a class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600" href="removeuser.html">Reservations</a>
+                <!-- Add more links as needed -->
+              </div>
+            </li> 
+            <li class="mr-10">
+              <a id="resident-manager-link" class="inline-block text-sm font-semibold text-gray-300 hover:text-gray-200 cursor-pointer" href="#">Resident Manager</a>
+              <!-- Dropdown Menu -->
+              <div class="dropdown-menu absolute hidden bg-gray-700 text-white">
+                <a class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600" href="adduser.html">Add User</a>
                 <a class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600" href="removeuser.html">Remove User</a>
                 <!-- Add more links as needed -->
               </div>
@@ -74,7 +83,7 @@
           <div class="flex flex-wrap -mx-4 mb-8">
             <div class="w-full lg:w-1/3 px-4 mb-8 lg:mb-0">
               <div class="mt-8">
-                <h3 class="text-2xl font-bold tracking-wide text-white mb-1" contenteditable="false">Info</h3>
+                <h3 class="text-2xl font-bold tracking-wide text-white mb-1" contenteditable="false"></h3>
                 <p class="text-xs text-gray-300" contenteditable="false"></p>
               </div>
             </div>
@@ -83,7 +92,9 @@
                 <div class="max-w-xl mx-auto">
                   <div id="monthlyMessage" class="hiddenMessage">
                     <p>Submit monthly payment to all users</p>
-                    <button class="inline-block py-2 px-4 mb-2 text-xs text-center font-semibold leading-6 text-blue-50 bg-blue-500 hover:bg-blue-600 rounded-lg transition duration-200" type="button" onclick="submitMonthly()">Submit</button>
+                    <div class="mt-8 text-middle" contenteditable="false">
+                      <button id='submitPayment' class="inline-block py-2 px-4 mb-2 text-xs text-center font-semibold leading-6 text-blue-50 bg-blue-500 hover:bg-blue-600 rounded-lg transition duration-200" type="button" onclick="submitMonthly()">Submit</button>
+                    </div>
                   </div>
                   <form id = "submitPaymentForm" class="hiddenData">
                     <div class="flex flex-wrap -mx-4 -mb-10">
@@ -136,18 +147,27 @@
       });
 
       document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('all-options-link').addEventListener('click', function(event) {
+        document.getElementById('community-manager-link').addEventListener('click', function(event) {
             event.stopPropagation(); // Prevent click from immediately propagating to document
-            showDropdown();
+            showDropdown('community-manager-link');
+        });
+
+        document.getElementById('resident-manager-link').addEventListener('click', function(event) {
+            event.stopPropagation(); // Prevent click from immediately propagating to document
+            showDropdown('resident-manager-link');
         });
 
         document.addEventListener('click', function(event) {
-            var dropdownMenu = document.querySelector('#all-options-link + .dropdown-menu');
-            if (dropdownMenu.style.display === 'block' && !dropdownMenu.contains(event.target) && event.target.id !== 'all-options-link') {
+            var dropdownMenu = document.querySelector('#resident-manager-link + .dropdown-menu');
+            if (dropdownMenu.style.display === 'block' && !dropdownMenu.contains(event.target) && event.target.id !== 'resident-manager-link') {
+                dropdownMenu.style.display = 'none'; // Hide the dropdown
+            }
+            var dropdownMenu = document.querySelector('#community-manager-link + .dropdown-menu');
+            if (dropdownMenu.style.display === 'block' && !dropdownMenu.contains(event.target) && event.target.id !== 'community-manager-link') {
                 dropdownMenu.style.display = 'none'; // Hide the dropdown
             }
         });
-
+        togglePaymentType('monthly');
       });
     </script>
 </body>

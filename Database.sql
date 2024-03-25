@@ -1,3 +1,10 @@
+--Apartment Info
+CREATE TABLE Apartments (
+    ApartmentNumber INT AUTO_INCREMENT PRIMARY KEY,
+    Building VARCHAR(255) NOT NULL,
+    NumberOfRooms INT NOT NULL
+);
+
 --User Accounts
 CREATE TABLE UserAccounts (
     UserID INT AUTO_INCREMENT PRIMARY KEY,
@@ -17,13 +24,6 @@ CREATE TABLE ResetToken (
     ResetToken VARCHAR(255) NOT NULL,
     PRIMARY KEY (Email),
     FOREIGN KEY (Email) REFERENCES UserAccounts(Email)
-);
-
---Apartment Info
-CREATE TABLE Apartments (
-    ApartmentNumber INT AUTO_INCREMENT PRIMARY KEY,
-    Building VARCHAR(255) NOT NULL,
-    NumberOfRooms INT NOT NULL
 );
 
 CREATE TABLE UserApartments (
