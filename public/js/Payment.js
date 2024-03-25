@@ -95,8 +95,6 @@ function fillPaymentDropdown() {
     }
   })
   .catch(error => console.error('Error:', error));
-  
-  
 }
 
 function getPaymentDue() {

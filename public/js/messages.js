@@ -75,7 +75,7 @@ async function getEvents() {
     try {
         let response = await fetch('http://localhost:5000/message/get-events', {
             method: 'GET',
-            credentials: 'include' // If your endpoint requires authentication
+            credentials: 'include'
         });
         
         let data = await response.json();
@@ -84,23 +84,21 @@ async function getEvents() {
             populateEvents(data.events);
         } else {
             console.error('Failed to fetch events:', data.message);
-            // Handle the error case, maybe show a message to the user
         }
     } catch (error) {
         console.error('Error fetching events:', error);
-        // Handle network errors or other issues here
     }
 }
 
 
 function populateEvents(events) {
-    const eventsContainer = document.getElementById('eventsContainer'); // Make sure you have a div with this id in your HTML
-    eventsContainer.innerHTML = ''; // Clear existing content
+    const eventsContainer = document.getElementById('eventsContainer');
+    eventsContainer.innerHTML = '';
   
     events.forEach(event => {
       const eventElement = document.createElement('a');
       eventElement.className = "block p-4 mb-4 bg-gray-600 rounded-xl hover:bg-gray-700 transition duration-200";
-      eventElement.href = "#"; // You might want to change this to link to an event detail page
+      eventElement.href = "#";
   
       eventElement.innerHTML = `
         <h4 id="eventName" class="text-white font-semibold leading-6 mb-1">${event.EventName}</h4>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Page title</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="../css/tailwind/tailwind.min.css">
+    <link rel="stylesheet" href="../css/tailwind/customstyle.css">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/Logo.png">
+    <script src="../js/main.js"></script>
+    <script src="../js/Payment.js"></script>
+    <script src="../js/admin.js"></script>
+    <script src="../js/communityAdmin.js"></script>
+</head>
+<body class="antialiased bg-body text-body font-body" style="display: none;">
+  <script>
+    checkLogin("Admin");
+  </script>
+  <div class="">            
+    <section class="relative"><nav class="flex items-center p-8 bg-gray-700 mb-3"><div class="w-full xl:w-auto px-2 xl:mr-12">
+          <div class="flex items-center justify-between">
+            <a class="inline-flex items-center h-8" href="adminindex.html">
+              <!-- Resize image with w-24 h-24 -->
+              <img src="../images/Logo.png" alt="" class="w-24 h-24"></a>
+          </div>
+        </div>
+        <div class="hidden xl:block w-full md:w-auto px-2 mr-auto">
+          <ul class="flex items-center"><li class="mr-10"><a class="inline-block text-sm font-semibold text-gray-300 hover:text-gray-200" href="adminindex.html">Home</a></li>
+            <li class="mr-10">
+              <a class="inline-flex items-center text-sm font-semibold text-gray-300 hover:text-gray-200" href="../messages.html">
+                <span>Messages</span>
+                <div class="flex w-5 h-5 ml-2 items-center justify-center text-xs text-white bg-blue-500 rounded-full">4</div>
+              </a>
+            </li>
+            <li class="mr-10"><a class="inline-block text-sm font-semibold text-gray-300 hover:text-gray-200" href="sendpaymentdue.html">Payment Manager</a></li>
+            <li class="mr-10">
+              <a id="community-manager-link" class="inline-block text-sm font-semibold text-gray-300 hover:text-gray-200 cursor-pointer" href="#">Community Manager</a>
+              <!-- Dropdown Menu -->
+              <div class="dropdown-menu absolute hidden bg-gray-700 text-white">
+                <a class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600" href="../changepasswordloggedin.html">Events</a>
+                <a class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600" href="removeuser.html">Annoucment</a>
+                <a class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600" href="removeuser.html">Reservations</a>
+                <!-- Add more links as needed -->
+              </div>
+            </li> 
+            <li class="mr-10">
+              <a id="resident-manager-link" class="inline-block text-sm font-semibold text-gray-300 hover:text-gray-200 cursor-pointer" href="#">Resident Manager</a>
+              <!-- Dropdown Menu -->
+              <div class="dropdown-menu absolute hidden bg-gray-700 text-white">
+                <a class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600" href="adduser.html">Add User</a>
+                <a class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600" href="removeuser.html">Remove User</a>
+                <!-- Add more links as needed -->
+              </div>
+            </li>              
+          </ul></div>
+        <div class="hidden xl:block w-full md:w-auto px-2"></div>
+        <div class="w-full sm:w-auto px-3 mb-4">
+          <a href="#">
+            <button id="logoutButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Sign Out</button>
+          </a>
+        </div>
+      </nav></section>  
+                
+      <section>
+        <div class="px-8 pt-8 pb-4 bg-gray-600">
+          <div class="pb-6 border-b-2 border-gray-500">
+            <div class="flex flex-wrap justify-between -mx-4">
+              <div class="w-full lg:w-auto px-4 mb-5 lg:mb-0">
+                <h4 class="text-2xl font-bold text-white tracking-wide leading-6 mb-1">Manage Amenities and hours</h4>
+                <p class="text-xs leading-5 text-gray-300">Create a new announcement or remove an old one</p>
+              </div>              
+            </div>
+            <ul id='actionList' class="flex flex-wrap items-center mt-5 lg:mt-4 -mb-2">
+              <li class="mb-2 mr-8"><a class="inline-block py-1.5 px-4 text-sm text-white font-bold leading-6 hover:bg-gray-700 rounded-lg" id="monthlyPayment" href="#">Manage Hours</a></li>
+              <li class="mb-2 mr-8"><a class="inline-block py-1.5 px-4 text-sm text-white font-bold leading-6 hover:bg-gray-700 rounded-lg" id="customPayment" href="#">Create new Amenity</a></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+                
+      <section class="py-8"><div class="container px-4 mx-auto">
+          <div class="flex flex-wrap -mx-4 mb-8">
+            <div class="w-full lg:w-1/3 px-4 mb-8 lg:mb-0">
+              <div class="mt-8">
+                <h3 class="text-2xl font-bold tracking-wide text-white mb-1" contenteditable="false"></h3>
+                <p class="text-xs text-gray-300" contenteditable="false"></p>
+              </div>
+            </div>
+            <div class="w-full lg:w-2/3 px-4">
+              <div class="px-8 md:px-16 pt-16 pb-8 bg-gray-500 rounded-xl">
+                <div class="max-w-xl mx-auto">
+                  <div id="monthlyMessage" class="hiddenMessage">
+                      <div class="flex flex-wrap -mx-4 -mb-10">
+                        <div class="w-full md:w-1/2 px-4 mb-10">
+                          <div class="relative block px-3 w-full font-medium border border-gray-400 hover:border-white focus-within:border-green-500 rounded-lg">
+                            <span class="absolute bottom-full left-0 ml-3 -mb-1 transform translate-y-0.5 text-xs font-semibold text-gray-300 px-1 bg-gray-500">Select Amenity</span>
+                            <span class="absolute top-1/2 right-0 mr-5 transform -translate-y-1/2">
+                              <svg width="12" height="8" viewbox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M10.9999 1.16994C10.8126 0.983692 10.5591 0.87915 10.2949 0.87915C10.0308 0.87915 9.77731 0.983692 9.58995 1.16994L5.99995 4.70994L2.45995 1.16994C2.27259 0.983692 2.01913 0.87915 1.75495 0.87915C1.49076 0.87915 1.23731 0.983692 1.04995 1.16994C0.95622 1.26291 0.881826 1.37351 0.831057 1.49537C0.780288 1.61723 0.75415 1.74793 0.75415 1.87994C0.75415 2.01195 0.780288 2.14266 0.831057 2.26452C0.881826 2.38638 0.95622 2.49698 1.04995 2.58994L5.28995 6.82994C5.38291 6.92367 5.49351 6.99807 5.61537 7.04883C5.73723 7.0996 5.86794 7.12574 5.99995 7.12574C6.13196 7.12574 6.26267 7.0996 6.38453 7.04883C6.50638 6.99807 6.61699 6.92367 6.70995 6.82994L10.9999 2.58994C11.0937 2.49698 11.1681 2.38638 11.2188 2.26452C11.2696 2.14266 11.2957 2.01195 11.2957 1.87994C11.2957 1.74793 11.2696 1.61723 11.2188 1.49537C11.1681 1.37351 11.0937 1.26291 10.9999 1.16994Z" fill="#3D485B"></path>
+                              </svg>
+                            </span>
+                            <select class="w-full py-4 text-gray-50 font-semibold appearance-none bg-transparent outline-none" id="amenityDropdown" name="state">
+                              <!-- Options will be generated by JavaScript -->
+                            </select>
+                          </div>
+                        </div>
+                        <div class="w-full md:w-1/2 px-4 mb-10">
+                          <div class="relative w-full h-14 py-4 px-3 border border-gray-400 hover:border-white focus-within:border-green-500 rounded-lg" contenteditable="false">
+                            <span class="absolute bottom-full left-0 ml-3 -mb-1 transform translate-y-0.5 text-xs font-semibold text-gray-300 px-1 bg-gray-500">Start Hour</span>
+                            <input class="block w-full outline-none bg-transparent text-gray-50 placeholder-gray-50 font-semibold" id="amenityStartHour" type="time" placeholder="" contenteditable="false" name=""></div>
+                        </div>
+                        <div class="w-full md:w-1/2 px-4 mb-10">
+                          <div class="relative w-full h-14 py-4 px-3 border border-gray-400 hover:border-white focus-within:border-green-500 rounded-lg" contenteditable="false">
+                            <span class="absolute bottom-full left-0 ml-3 -mb-1 transform translate-y-0.5 text-xs font-semibold text-gray-300 px-1 bg-gray-500">End Hour</span>
+                            <input class="block w-full outline-none bg-transparent text-gray-50 placeholder-gray-50 font-semibold" id="amenityEndHour" type="time" placeholder="" contenteditable="false" name=""></div>
+                        </div>
+                        <div class="w-full md:w-1/2 px-4 mb-10">
+                          <div class="relative w-full h-14 py-4 px-3 border border-gray-400 hover:border-white focus-within:border-green-500 rounded-lg">
+                              <span class="absolute bottom-full left-0 ml-3 -mb-1 transform translate-y-0.5 text-xs font-semibold text-gray-300 px-1 bg-gray-500">Interval</span>
+                              <select class="block w-full outline-none bg-white text-black placeholder-gray-50 font-semibold" id="amenityInterval" name="amenityInterval">
+                                  <option value="00:30">30 minutes</option>
+                                  <option value="01:00">1 hour</option>
+                                  <option value="02:00">2 hours</option>
+                              </select>
+                          </div>
+                      </div>                     
+                        <div class="w-full md:w-1/2 px-4 mb-10">
+                          <div class="relative w-full h-14 py-4 px-3 border border-gray-400 hover:border-white focus-within:border-green-500 rounded-lg" contenteditable="false">
+                            <span class="absolute bottom-full left-0 ml-3 -mb-1 transform translate-y-0.5 text-xs font-semibold text-gray-300 px-1 bg-gray-500">Start Date</span>
+                            <input class="block w-full outline-none bg-transparent text-gray-50 placeholder-gray-50 font-semibold" id="amenityStartDate" type="date" placeholder="" contenteditable="false" name=""></div>
+                        </div>
+                        <div class="w-full md:w-1/2 px-4 mb-10">
+                          <div class="relative w-full h-14 py-4 px-3 border border-gray-400 hover:border-white focus-within:border-green-500 rounded-lg" contenteditable="false">
+                            <span class="absolute bottom-full left-0 ml-3 -mb-1 transform translate-y-0.5 text-xs font-semibold text-gray-300 px-1 bg-gray-500">End Date</span>
+                            <input class="block w-full outline-none bg-transparent text-gray-50 placeholder-gray-50 font-semibold" id="amenityEndDate" type="date" placeholder="" contenteditable="false" name=""></div>
+                        </div>
+                        <div class="w-full md:w-1/2 px-4 mb-10">
+                          <div class="relative w-full py-4 px-3 border border-gray-400 hover:border-white focus-within:border-green-500 rounded-lg">
+                              <span class="absolute bottom-full left-0 ml-3 -mb-1 transform translate-y-0.5 text-xs font-semibold text-gray-300 px-1 bg-gray-500">Closed Days</span>
+                              <div class="mt-6">
+                                  <label class="inline-flex items-center">
+                                      <input type="checkbox" id="closedMonday" name="closedDays" value="Monday" class="form-checkbox text-green-500">
+                                      <span class="ml-2 text-gray-50 font-semibold">Monday</span>
+                                  </label>
+                                  <label class="inline-flex items-center">
+                                      <input type="checkbox" id="closedTuesday" name="closedDays" value="Tuesday" class="form-checkbox text-green-500">
+                                      <span class="ml-2 text-gray-50 font-semibold">Tuesday</span>
+                                  </label>
+                                  <label class="inline-flex items-center">
+                                      <input type="checkbox" id="closedWednesday" name="closedDays" value="Wednesday" class="form-checkbox text-green-500">
+                                      <span class="ml-2 text-gray-50 font-semibold">Wednesday</span>
+                                  </label>
+                                  <label class="inline-flex items-center">
+                                      <input type="checkbox" id="closedThursday" name="closedDays" value="Thursday" class="form-checkbox text-green-500">
+                                      <span class="ml-2 text-gray-50 font-semibold">Thursday</span>
+                                  </label>
+                                  <label class="inline-flex items-center">
+                                      <input type="checkbox" id="closedFriday" name="closedDays" value="Friday" class="form-checkbox text-green-500">
+                                      <span class="ml-2 text-gray-50 font-semibold">Friday</span>
+                                  </label>
+                                  <label class="inline-flex items-center">
+                                      <input type="checkbox" id="closedSaturday" name="closedDays" value="Saturday" class="form-checkbox text-green-500">
+                                      <span class="ml-2 text-gray-50 font-semibold">Saturday</span>
+                                  </label>  
+                                  <label class="inline-flex items-center">
+                                      <input type="checkbox" id="closedSunday" name="closedDays" value="Sunday" class="form-checkbox text-green-500">
+                                      <span class="ml-2 text-gray-50 font-semibold">Sunday</span>
+                                  </label>
+                              </div>
+                          </div>
+                      </div>                      
+                        <div class="w-full px-4 mb-10"></div>
+                      </div>
+                      <div class="mt-8 text-right" contenteditable="false">
+                        <button id='submitEvent' class="inline-block py-2 px-4 mb-2 text-xs text-center font-semibold leading-6 text-blue-50 bg-blue-500 hover:bg-blue-600 rounded-lg transition duration-200" type="button" onclick="createAmenityHours()">Submit</button>
+                      </div>
+                  </div>
+                  <form id = "submitPaymentForm" class="hiddenData">
+                    <div class="flex flex-wrap -mx-4 -mb-10">
+                      <div class="w-full md:w-1/2 px-4 mb-10">
+                        <div class="relative w-full h-14 py-4 px-3 border border-gray-400 hover:border-white focus-within:border-green-500 rounded-lg" contenteditable="false">
+                          <span class="absolute bottom-full left-0 ml-3 -mb-1 transform translate-y-0.5 text-xs font-semibold text-gray-300 px-1 bg-gray-500">Amenity Name</span>
+                          <input class="block w-full outline-none bg-transparent text-gray-50 placeholder-gray-50 font-semibold" id="newAmenityName" type="text" placeholder="" contenteditable="false" name=""></div>
+                      </div>
+                      <div class="w-full px-4 mb-10">
+                        <div class="relative w-full py-4 px-3 border border-gray-400 hover:border-white focus-within:border-green-500 rounded-lg">
+                          <span class="absolute bottom-full left-0 ml-3 -mb-1 transform translate-y-0.5 text-xs font-semibold text-gray-300 px-1 bg-gray-500" contenteditable="false">Description</span>
+                          <textarea class="block w-full h-64 outline-none bg-transparent text-gray-50 placeholder-gray-50 font-semibold resize-none" id="newAmenityDescription" name="" cols="30" rows="10" placeholder="" contenteditable="false"></textarea>
+                        </div>
+                      </div>
+                      <div class="w-full px-4 mb-10"></div>
+                    </div>
+                    <div class="mt-8 text-right" contenteditable="false">
+                      <button id='submitEvent' class="inline-block py-2 px-4 mb-2 text-xs text-center font-semibold leading-6 text-blue-50 bg-blue-500 hover:bg-blue-600 rounded-lg transition duration-200" type="button" onclick="submitCreateAmenity()">Submit</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-wrap -mx-4"></div>
+        </div>
+      </section>
+    </div>
+    <script>
+      // Use the logoutUser function from navbar.js when the logout button is clicked
+      document.getElementById('logoutButton').addEventListener('click', logoutUser);
+
+      document.getElementById('monthlyPayment').addEventListener('click', function() {
+        togglePaymentType('monthly');
+      });
+
+      document.getElementById('customPayment').addEventListener('click', function() {
+        togglePaymentType('custom');
+
+      });
+
+      document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('community-manager-link').addEventListener('click', function(event) {
+            event.stopPropagation(); // Prevent click from immediately propagating to document
+            showDropdown('community-manager-link');
+        });
+
+        document.getElementById('resident-manager-link').addEventListener('click', function(event) {
+            event.stopPropagation(); // Prevent click from immediately propagating to document
+            showDropdown('resident-manager-link');
+        });
+
+        document.addEventListener('click', function(event) {
+            var dropdownMenu = document.querySelector('#resident-manager-link + .dropdown-menu');
+            if (dropdownMenu.style.display === 'block' && !dropdownMenu.contains(event.target) && event.target.id !== 'resident-manager-link') {
+                dropdownMenu.style.display = 'none'; // Hide the dropdown
+            }
+            var dropdownMenu = document.querySelector('#community-manager-link + .dropdown-menu');
+            if (dropdownMenu.style.display === 'block' && !dropdownMenu.contains(event.target) && event.target.id !== 'community-manager-link') {
+                dropdownMenu.style.display = 'none'; // Hide the dropdown
+            }
+        });
+        togglePaymentType('monthly'); 
+        fillAmenityDropdown();
+      });
+    </script>
+</body>
+</html>
+

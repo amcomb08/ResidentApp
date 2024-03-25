@@ -9,7 +9,12 @@ function isValidData(data) {
     return true; 
 }
 
-async function modifyUserClicked(action) { //Executes once save is clicked on the addpayment page
+function formatDate(dateString) {
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  return new Date(dateString).toLocaleDateString(undefined, options);
+}
+
+async function modifyUserClicked(action) {
   let dataToInsert = {};
   let endpoint = '';
     if(action === 'add'){
@@ -103,7 +108,7 @@ async function submitMonthly(){
   }
 }
 
-async function submitCustom() { //Executes once save is clicked on the addpayment page
+async function submitCustom() { 
 
     const dataToInsert = {
           DueDate: document.getElementById('paymentDueDate').value.trim(),
@@ -115,7 +120,6 @@ async function submitCustom() { //Executes once save is clicked on the addpaymen
     // validate the data
     if (isValidData(dataToInsert)) {
       try {
-        // You need to await the fetch call to complete
         let response = await fetch('http://localhost:5000/adminRoutes/submitCustom', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -141,5 +145,6 @@ async function submitCustom() { //Executes once save is clicked on the addpaymen
       alert('Please fill in all the fields');
     }
 }
+
 
 
