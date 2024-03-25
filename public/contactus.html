@@ -28,31 +28,9 @@
               </div>
             </div>
           </div>
-          <div class="hidden xl:block w-full md:w-auto px-2 mr-auto">
-            <ul class="flex items-center"><li class="mr-10"><a class="inline-block text-sm font-semibold text-gray-300 hover:text-gray-200" href="index.html">Home</a></li>
-              <li class="mr-10">
-                <a class="inline-flex items-center text-sm font-semibold text-gray-300 hover:text-gray-200" href="messages.html">
-                  <span>Messages</span>
-                  <div class="flex w-5 h-5 ml-2 items-center justify-center text-xs text-white bg-blue-500 rounded-full">4</div>
-                </a>
-              </li>
-              <li class="mr-10"><a class="inline-block text-sm font-semibold text-gray-300 hover:text-gray-200" href="ledger.html">Payment History</a></li>
-              <li class="mr-10"><a class="inline-block text-sm font-semibold text-gray-300 hover:text-gray-200" href="community.html">Our Community</a></li>
-              <li class="relative">
-                <a id="all-options-link" class="inline-block text-sm font-semibold text-gray-300 hover:text-gray-200 cursor-pointer" href="#">All Options</a>
-                <!-- Dropdown Menu -->
-                <div class="dropdown-menu absolute hidden bg-gray-700 text-white">
-                  <a class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600" href="\changepasswordloggedin.html">Change Password</a>
-                  <!-- Add more links as needed -->
-                </div>
-              </li> 
-            </ul></div>
-          <div class="hidden xl:block w-full md:w-auto px-2"></div>
-          <div class="w-full sm:w-auto px-3 mb-4">
-            <a href="#">
-              <button id="logoutButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Sign Out</button>
-            </a>
-          </div>
+          <header id= main-header>
+
+          </header>
         </nav></section>
                 
       <section class="py-8">
@@ -145,22 +123,8 @@
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="js/charts-demo.js"></script>
     <script>
-      // Use the logoutUser function from navbar.js when the logout button is clicked
-      document.getElementById('logoutButton').addEventListener('click', logoutUser);
-    </script>
-    <script>
       document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('all-options-link').addEventListener('click', function(event) {
-            event.stopPropagation(); // Prevent click from immediately propagating to document
-            showDropdown('all-options-link');
-        });
-
-        document.addEventListener('click', function(event) {
-            var dropdownMenu = document.querySelector('#all-options-link + .dropdown-menu');
-            if (dropdownMenu.style.display === 'block' && !dropdownMenu.contains(event.target) && event.target.id !== 'all-options-link') {
-                dropdownMenu.style.display = 'none'; // Hide the dropdown
-            }
-        });
+        initalizeNavBar();
 
         document.getElementById('contactUsForm').addEventListener('submit', async (e) => {
           e.preventDefault();
