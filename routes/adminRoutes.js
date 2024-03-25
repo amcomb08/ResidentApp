@@ -626,4 +626,118 @@ router.get('/getAmenities', (req, res) => {
             });
     });
 
+    router.get('/get-reservations', (req, res) => {
+        if (!req.session || !req.session.userId) {
+            return res.status(401).json({ success: false, message: 'User not logged in' });
+        }
+    
+        // SQL query to join Reservations with UserAccounts, AmenitySchedules, and Amenities
+        const getReservationsQuery = `
+            SELECT 
+                R.UserID, R.ScheduleID, R.Status, R.ReservationID, 
+                UA.FirstName, UA.LastName, UA.PhoneNumber, UA.Email,
+                ASch.StartTime, ASch.EndTime, ASch.Date, ASch.AmenityID,
+                A.AmenityName
+            FROM Reservations R
+            INNER JOIN UserAccounts UA ON R.UserID = UA.UserID
+            INNER JOIN AmenitySchedules ASch ON R.ScheduleID = ASch.ScheduleID
+            INNER JOIN Amenities A ON ASch.AmenityID = A.AmenityID
+            WHERE R.Status = 'Confirmed'
+        `;
+    
+        db.query(getReservationsQuery, (err, reservationResults) => {
+            if (err) {
+                console.error('Failed to retrieve reservations:', err);
+                return res.status(500).json({ success: false, message: 'Failed to retrieve reservations.', error: err });
+            }
+    
+            // If you get results, send them back to the client
+            if (reservationResults.length > 0) {
+                return res.json({ success: true, reservations: reservationResults });
+            } else {
+                return res.json({ success: false, message: 'No confirmed reservations found.' });
+            }
+        });
+    });
+    
+    router.post('/cancelReservation', (req, res) => {
+        if (!req.session || !req.session.userId) {
+            return res.json({ success: false, message: 'User is not logged in.' });
+        }
+
+        const { ReservationID, ScheduleID } = req.body;
+
+        // Get a connection from the pool
+        db.getConnection((err, connection) => {
+            if (err) {
+                return res.json({ success: false, message: 'Error getting database connection.' });
+            }
+
+            // Start a transaction
+            connection.beginTransaction((err) => {
+                if (err) {
+                    return res.json({ success: false, message: 'Failed to start the transaction.' });
+                }
+
+                // Construct the query to update the reservation status
+                const cancelQuery = `
+                    UPDATE Reservations
+                    SET Status = 'Cancelled'
+                    WHERE ReservationID = ?
+                `;
+
+                // Execute the query to update the reservation status
+                connection.query(cancelQuery, [ReservationID], (err, results) => {
+                    if (err) {
+                        connection.rollback(() => {
+                            console.error('Failed to cancel reservation.', err);
+                            return res.json({ success: false, message: 'Failed to cancel reservation.' });
+                        });
+                        return;
+                    }
+
+                    if (results.affectedRows === 0) {
+                        connection.rollback(() => {
+                            return res.json({ success: false, message: 'No reservation found with that information.' });
+                        });
+                        return;
+                    }
+
+                    // Construct the query to update the amenity schedule
+                    const updateScheduleQuery = `
+                        UPDATE AmenitySchedules
+                        SET Reserved = 0
+                        WHERE ScheduleID = ?
+                    `;
+
+                    // Execute the query to update the amenity schedule
+                    connection.query(updateScheduleQuery, [ScheduleID], (err, updateResults) => {
+                        if (err) {
+                            connection.rollback(() => {
+                                console.error('Failed to update amenity schedule.', err);
+                                return res.json({ success: false, message: 'Failed to update amenity schedule.' });
+                            });
+                            return;
+                        }
+
+                        // Commit the transaction
+                        connection.commit((err) => {
+                            if (err) {
+                                connection.rollback(() => {
+                                    console.error('Failed to commit transaction.', err);
+                                    return res.json({ success: false, message: 'Failed to commit the changes.' });
+                                });
+                                return;
+                            }
+
+                            res.json({ success: true, message: 'Reservation successfully canceled and schedule updated.' });
+                        });
+                    });
+                });
+            });
+        });
+    });
+    
+    
+
 module.exports = router;

@@ -376,3 +376,84 @@ function fillAmenityDropdown() {
       alert('Please fill in all the fields');
     }
   }
+
+  async function getReservations() {
+    try {
+        let response = await fetch('http://localhost:5000/adminRoutes/get-reservations', {
+            method: 'GET',
+            credentials: 'include'
+        });
+        
+        let data = await response.json();
+        
+        if (data.success) {
+            populateReservations(data.reservations);
+        } else {
+            console.error('Failed to fetch events:', data.message);
+        }
+    } catch (error) {
+        console.error('Error fetching events:', error);
+    }
+  }
+
+  function populateReservations(reservations) {
+    const eventsContainer = document.getElementById('reservationsContainer');
+    eventsContainer.innerHTML = '';
+  
+    reservations.forEach(reservation => {
+        const eventElement = document.createElement('div'); 
+        eventElement.className = "block p-4 mb-4 bg-gray-600 rounded-xl hover:bg-gray-700 transition duration-200";
+  
+        eventElement.innerHTML = `
+            <h4 id="eventName" class="text-white font-semibold leading-6 mb-1">${reservation.AmenityName}</h4>
+            <div class="flex items-center mb-4">
+                <span class="h-2 w-2 mr-1 bg-pink-400 rounded-full"></span>
+                <span class="text-xs font-medium text-pink-400">${reservation.FirstName}, ${reservation.LastName}</span>
+            </div>
+            <p class="text-xs text-gray-300 leading-normal mb-10">Contact: ${reservation.PhoneNumber} OR ${reservation.Email}</p>
+            <div class="pt-4 border-t border-gray-500">
+                <div class="flex flex-wrap items-center justify-between -m-2">
+                    <div class="w-auto p-2">
+                        <div class="flex items-center p-2 bg-gray-500 rounded-md">
+                            <!-- Your SVG here -->
+                            <span class="ml-2 text-xs font-medium text-gray-200">${formatDate(reservation.Date)}</span>
+                            <span class="ml-2 text-xs font-medium text-gray-200">${reservation.StartTime} - ${reservation.EndTime}</span>
+                        </div>
+                    </div>
+                    <div class="w-auto p-2">
+                        <button onclick="cancelReservation(${reservation.ScheduleID}, ${reservation.ReservationID})" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        `;
+  
+        eventsContainer.appendChild(eventElement);
+    });
+  }
+
+  async function cancelReservation(ScheduleID, ReservationID) {
+  
+    try {
+      // You need to await the fetch call to complete
+      let response = await fetch('http://localhost:5000/adminRoutes/cancelReservation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ScheduleID: ScheduleID, ReservationID: ReservationID }),
+        credentials: 'include'
+      });
+      
+      // Also await the response.json() call to resolve
+      let data = await response.json();
+      
+      if (data.success) {
+        // Handle the success scenario, such as redirecting to a confirmation page
+        window.location = './adminindex.html';
+      } else {
+        // Handle the failure scenario
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred while processing your request.');
+    }
+}
