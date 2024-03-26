@@ -311,6 +311,33 @@ function deletePaymentMethod(cardID) {
   .catch(error => console.error('Error:', error));
 }
 
+function validCardInfo(data) {
+  let isValid = true;
+  
+  // Validate card number (assuming 16 digits)
+  const cardNumberRegex = /^\d{16}$/;
+  if (!cardNumberRegex.test(data.cardNumber)) {
+    alert("Please enter a valid 16-digit card number.");
+    isValid = false;
+  }
+  
+  // Validate expiry date (MM/YY)
+  const expiryRegex = /^\d{2}\/\d{2}$/;
+  if (!expiryRegex.test(data.cardExpiry)) {
+    alert("Please enter a valid expiry date in MM/YY format.");
+    isValid = false;
+  }
+  
+  // Validate CVV (3 or 4 digits)
+  const cvvRegex = /^\d{3,4}$/;
+  if (!cvvRegex.test(data.cardCVV)) {
+    alert("Please enter a valid CVV (3 or 4 digits).");
+    isValid = false;
+  }
+
+  return isValid;
+}
+
 
 async function savePaymentClicked() { //Executes once save is clicked on the addpayment page
 
@@ -327,32 +354,39 @@ async function savePaymentClicked() { //Executes once save is clicked on the add
     addressStreet: document.getElementById('addressStreet').value.trim(),
   };
 
+  let validCard = validCardInfo(dataToInsert);
+
   // validate the data
   if (isValidData(dataToInsert)) {
-    try {
-      // You need to await the fetch call to complete
-      let response = await fetch('http://localhost:5000/payments/addpayment', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dataToInsert),
-        credentials: 'include'
-      });
-      
-      // Also await the response.json() call to resolve
-      let data = await response.json();
-      
-      if (data.success) {
-        // Handle the success scenario, such as redirecting to a confirmation page
-        window.location = './index.html';
-      } else {
-        // Handle the failure scenario
-        alert(data.message);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      alert('An error occurred while processing your payment.');
+    if(validCard){
+        try {
+          // You need to await the fetch call to complete
+          let response = await fetch('http://localhost:5000/payments/addpayment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(dataToInsert),
+            credentials: 'include'
+          });
+          
+          // Also await the response.json() call to resolve
+          let data = await response.json();
+          
+          if (data.success) {
+            // Handle the success scenario, such as redirecting to a confirmation page
+            window.location = './index.html';
+          } else {
+            // Handle the failure scenario
+            alert(data.message);
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('An error occurred while processing your payment.');
+        }
+    } else {
+      console.log("Card information is invalid. Halting operations.");
     }
-  } else {
-    alert('Please fill in all the fields');
+  }
+  else{
+    alert('Please fill out all fields');
   }
 }

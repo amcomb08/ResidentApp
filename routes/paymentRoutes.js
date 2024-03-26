@@ -1,6 +1,18 @@
 const express = require('express');
 const router = express.Router();
 const db = require('./db');
+const crypto = require('crypto');
+
+const ENCRYPTION_KEY = Buffer.from('9d239dba523edf58c16ed1da22dab2993636cffefa004629ca951dc6912004ac', 'hex'); // Convert hex string to Buffer
+const IV = Buffer.from('69ad758cc498b163092818cf16642487', 'hex'); // Convert hex string to Buffer
+
+function encrypt(text) {
+    let cipher = crypto.createCipheriv('aes-256-cbc', ENCRYPTION_KEY, IV);
+    let encrypted = cipher.update(text, 'utf8', 'hex'); // Specify input encoding and output encoding
+    encrypted += cipher.final('hex'); // Specify output encoding
+    return encrypted;
+}
+
 
 router.post('/makePayment', (req, res) => {
     const userID = req.session.userId;
@@ -201,6 +213,7 @@ router.post('/addpayment', (req, res) => {
         return res.json({ success: false, message: 'User is not logged in.' });
     }
 
+
     const {
         cardName,
         cardExpiry,
@@ -215,6 +228,10 @@ router.post('/addpayment', (req, res) => {
     } = req.body;
 
     const UserID = req.session.userId; // Obtain UserID from the session
+    // Encrypt cardNumber and CVV before storing them
+    const encryptedCardNumber = encrypt(cardNumber);
+    const encryptedCVV = encrypt(cardCVV);
+    
 
     // Construct the insert query
     const insertQuery = `
@@ -237,8 +254,8 @@ router.post('/addpayment', (req, res) => {
     db.query(insertQuery, [
         cardName,
         cardExpiry,
-        cardNumber,
-        cardCVV,
+        encryptedCardNumber,
+        encryptedCVV,
         cardNickname,
         addressCountry,
         addressCity,

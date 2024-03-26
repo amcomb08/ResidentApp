@@ -113,6 +113,7 @@ router.post('/verify-reset-code', async (req, res) => {
             req.session.loggedin = false;
             req.session.userId = email;
             req.session.save();
+            console.log("Session after verification:", req.session);
             res.json({ success: true });
         } else {
             res.json({ success: false, message: 'Invalid verification code.' });
@@ -121,10 +122,12 @@ router.post('/verify-reset-code', async (req, res) => {
 });
 
 // Change user password
-router.post('/changepasswordloggedin', (req, res) => {
+router.post('/changepassword', (req, res) => {
     let newpassword = req.body.newPassword;
     let confirmNewpassword = req.body.confirmNewPassword;
+    let type = req.body.changeType;  
     let userId = req.session.userId;
+    let query = "";
 
     // Check if passwords match first
     if (newpassword !== confirmNewpassword) {
@@ -138,11 +141,25 @@ router.post('/changepasswordloggedin', (req, res) => {
             return;
         }
 
-    // Update the user's password in the database with the hashed password
-    const query = "UPDATE UserAccounts SET Password = ? WHERE UserID = ?";
+    if(type === "loggedIn"){
+        query = "UPDATE UserAccounts SET Password = ? WHERE UserID = ?";
+    }
+    else{
+        query = "UPDATE UserAccounts SET Password = ? WHERE Email = ?";
+    }
+    console.log("query:", query);
+    console.log("userId:", userId);
     db.query(query, [hashedPassword, userId], (err, results) => {
         if (err) {
-            res.json({ success: false, message: 'Error updating password.' });
+            // Log the error with more details
+            console.error(
+                `Error occurred on ${new Date().toISOString()} during password update for userId ${userId}:`, 
+                err.code, 
+                err.message
+            );
+    
+            // Send a generic error message to the client
+            res.json({ success: false, message: 'Error updating password. Please try again later.' });
             return;
         }
 
@@ -155,7 +172,8 @@ router.post('/changepasswordloggedin', (req, res) => {
 router.post('/changepasswordwithlink', (req, res) => {
     let newpassword = req.body.newPassword;
     let confirmNewpassword = req.body.confirmNewPassword;
-    let userId = req.session.resetEmail;
+    let userId = req.session.userId;
+    console.log("userId:", userId);
 
     // Check if passwords match first
     if (newpassword !== confirmNewpassword) {

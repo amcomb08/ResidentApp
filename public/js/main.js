@@ -192,7 +192,7 @@ function createHeader() {
         {
             text: 'All Options',
             dropdown: [
-                { text: 'Change Password', href: 'changepasswordloggedin.html' },
+                { text: 'Change Password', href: 'changepassword.html?type=loggedIn' },
             ]
         }
     ];

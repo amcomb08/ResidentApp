@@ -10,7 +10,7 @@ async function submitCreateEvent() {
     // validate the data
     if (isValidData(dataToInsert)) {
       try {
-        let response = await fetch('http://localhost:5000/adminRoutes/submitEvent', {
+        let response = await fetch('http://localhost:5000/communityAdmin/submitEvent', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(dataToInsert),
@@ -94,7 +94,7 @@ async function submitCreateEvent() {
   
       try {
         // You need to await the fetch call to complete
-        let response = await fetch('http://localhost:5000/adminRoutes/deleteEvent', {
+        let response = await fetch('http://localhost:5000/communityAdmin/deleteEvent', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ EventID: EventID }),
@@ -127,7 +127,7 @@ async function submitCreateEvent() {
     // validate the data
     if (isValidData(dataToInsert)) {
       try {
-        let response = await fetch('http://localhost:5000/adminRoutes/submitAnnouncement', {
+        let response = await fetch('http://localhost:5000/communityAdmin/submitAnnouncement', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(dataToInsert),
@@ -205,7 +205,7 @@ async function deleteAnnouncement(AnnouncementID) {
   
     try {
       // You need to await the fetch call to complete
-      let response = await fetch('http://localhost:5000/adminRoutes/deleteAnnouncement', {
+      let response = await fetch('http://localhost:5000/communityAdmin/deleteAnnouncement', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ AnnouncementID: AnnouncementID }),
@@ -228,43 +228,10 @@ async function deleteAnnouncement(AnnouncementID) {
     }
 }
 
-function fillAmenityDropdown() {
-    // Get the dropdown element by its ID
-    const dropdown = document.getElementById('paymentDropdown');
-    
-    // Fetch the payment method nicknames from the server
-    fetch('http://localhost:5000/adminRoutes/getAmenities', {
-      credentials: 'include' 
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success && data.paymentMethods) {
-        // Clear the existing options
-        const dropdown = document.getElementById('paymentDropdown');
-        dropdown.length = 0;
-    
-        // Iterate over each payment method and create a new option element
-        data.paymentMethods.forEach(paymentMethod => {
-          const option = document.createElement('option');
-          option.textContent = paymentMethod.CardNickname; 
-          option.value = paymentMethod.CardID; 
-          option.className = 'bg-gray-500'; 
-          option.setAttribute('data-name-on-card', paymentMethod.NameOnCard);
-          option.setAttribute('data-card-number', paymentMethod.CardNum);
-          console.log(paymentMethod.NameOnCard);
-          dropdown.appendChild(option);
-        });
-      } else {
-        console.error(data.message);
-      }
-    })
-    .catch(error => console.error('Error:', error));
-  }
-
   function fillAmenityDropdown() {
     
     // Fetch the payment method nicknames from the server
-    fetch('http://localhost:5000/adminRoutes/getAmenities', {
+    fetch('http://localhost:5000/communityAdmin/getAmenities', {
       credentials: 'include' 
     })
     .then(response => response.json())
@@ -315,7 +282,7 @@ function fillAmenityDropdown() {
     // validate the data
     if (isValidData(dataToInsert)) {
       try {
-        let response = await fetch('http://localhost:5000/adminRoutes/submitAmenityHours', {
+        let response = await fetch('http://localhost:5000/communityAdmin/submitAmenityHours', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(dataToInsert),
@@ -351,7 +318,7 @@ function fillAmenityDropdown() {
     // validate the data
     if (isValidData(dataToInsert)) {
       try {
-        let response = await fetch('http://localhost:5000/adminRoutes/submitAmenity', {
+        let response = await fetch('http://localhost:5000/communityAdmin/submitAmenity', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(dataToInsert),
@@ -379,7 +346,7 @@ function fillAmenityDropdown() {
 
   async function getReservations() {
     try {
-        let response = await fetch('http://localhost:5000/adminRoutes/get-reservations', {
+        let response = await fetch('http://localhost:5000/communityAdmin/getReservations', {
             method: 'GET',
             credentials: 'include'
         });
@@ -435,7 +402,7 @@ function fillAmenityDropdown() {
   
     try {
       // You need to await the fetch call to complete
-      let response = await fetch('http://localhost:5000/adminRoutes/cancelReservation', {
+      let response = await fetch('http://localhost:5000/communityAdmin/cancelReservation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ScheduleID: ScheduleID, ReservationID: ReservationID }),
