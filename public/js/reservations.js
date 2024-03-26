@@ -97,6 +97,21 @@ function displayAmenitySchedule(schedules) {
     };
 }
 
+function waitForAmenitySelection() {
+  const amenitiesContainer = document.getElementById('amenitiesList');
+  amenitiesContainer.addEventListener('click', function(event) {
+      const amenityId = event.target.getAttribute('data-amenity-id');
+      if (amenityId) {
+          // Clear the "Time Slot" dropdown
+          const timeSlotDropdown = document.getElementById('timeSlot');
+          timeSlotDropdown.length = 1; // Keep only the placeholder option
+
+          // Proceed to fetch the new amenity schedule
+          fetchAmenitySchedule(amenityId);
+      }
+  });
+}
+
 function populateTimeSlots(schedulesForDate) {
     const timeSlotDropdown = document.getElementById('timeSlot');
     // Clear previous options except for the first placeholder option

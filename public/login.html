@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="css/tailwind/tailwind.min.css">
     <link rel="icon" type="image/png" sizes="32x32" href="images/Logo.png">
+    <script src="js/login.js"></script>
 </head>
 <body class="antialiased bg-body text-body font-body">
     <div class="">                
@@ -38,30 +39,7 @@
     </div>
     <script>
       document.addEventListener('DOMContentLoaded', (event) => {
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-    
-            let username = document.getElementById('email').value;
-            let password = document.getElementById('password').value;
-            let response = await fetch('http://localhost:5000/login/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password }),
-                credentials: 'include' 
-                });
-            let data = await response.json();
-            console.log(data.success);
-            if (data.success) {
-                document.cookie = "authenticated=true; path=/";  // Set the authenticated cookie
-                if (data.userRole === "Admin") {
-                  window.location = '/adminpages/adminindex.html';
-                } else {
-                  window.location = 'index.html';
-                }
-            } else {
-                alert(data.message);
-            }
-        });
+        loginButton();
       });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
