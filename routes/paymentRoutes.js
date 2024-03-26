@@ -13,6 +13,17 @@ function encrypt(text) {
     return encrypted;
 }
 
+function decrypt(encryptedText) {
+    let encryptedBuffer = Buffer.from(encryptedText, 'hex');
+
+    let decipher = crypto.createDecipheriv('aes-256-cbc', ENCRYPTION_KEY, IV);
+    let decrypted = decipher.update(encryptedBuffer);
+    decrypted = Buffer.concat([decrypted, decipher.final()]);
+
+    return decrypted.toString();
+}
+
+
 
 router.post('/makePayment', (req, res) => {
     const userID = req.session.userId;
@@ -124,8 +135,18 @@ router.get('/getPaymentMethods', (req, res) => {
             return res.json({ success: false, message: 'No payment methods found.' });
         }
 
-        // Sending the payment methods directly
-        return res.json({ success: true, paymentMethods: paymentMethodsResults });
+        // Decrypt CardNum for each payment method
+        const decryptedPaymentMethods = paymentMethodsResults.map(method => {
+            const decryptedCardNum = decrypt(method.CardNum);
+            return {
+                ...method,
+                CardNum: decryptedCardNum.slice(-4), 
+                FullCardNum: decryptedCardNum
+            };
+        });
+
+        // Sending the decrypted payment methods
+        return res.json({ success: true, paymentMethods: decryptedPaymentMethods });
     });
 });
 
@@ -148,8 +169,17 @@ router.get('/getPaymentHistory', (req, res) => {
             return res.json({ success: false, message: 'No payment methods found.' });
         }
 
+        // Decrypt CardNum for each payment method
+        const decryptedPaymentHistory = paymentHistoryResults.map(method => {
+            const decryptedCardNum = decrypt(method.CardNum);
+            return {
+                ...method,
+                CardNum: decryptedCardNum.slice(-4), 
+            };
+        });
+
         // Sending the payment methods directly
-        return res.json({ success: true, paymentHistory: paymentHistoryResults });
+        return res.json({ success: true, paymentHistory: decryptedPaymentHistory });
     });
 });
 
@@ -312,6 +342,7 @@ router.post('/updatePaymentHistory', (req, res) => {
 
     const userID = req.session.userId;
     const userApartment = req.session.apartmentNumber; 
+    const encryptedCardNumber = encrypt(paymentCardNumber);
 
     // Construct the insert query
     const insertQuery = `
@@ -336,7 +367,7 @@ router.post('/updatePaymentHistory', (req, res) => {
         paymentDate,
         paymentNote,
         paymentNameOnCard,
-        paymentCardNumber
+        encryptedCardNumber
     ], (err, results) => {
         if (err) {
             console.error('Database insert error:', err);

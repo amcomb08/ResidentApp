@@ -92,7 +92,7 @@ CREATE TABLE PaymentsMade (
     Date DATETIME NOT NULL,
     Notes TEXT,
     NameOnCard VARCHAR(255) NOT NULL,
-    CardNum VARCHAR(19) NOT NULL,
+    CardNum VARCHAR(255) NOT NULL,
     FOREIGN KEY (ApartmentNumber) REFERENCES Apartments(ApartmentNumber), 
     FOREIGN KEY (UserID) REFERENCES UserAccounts(UserID)
 );

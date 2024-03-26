@@ -86,7 +86,7 @@ function fillPaymentDropdown() {
         option.value = paymentMethod.CardID; 
         option.className = 'bg-gray-500'; 
         option.setAttribute('data-name-on-card', paymentMethod.NameOnCard);
-        option.setAttribute('data-card-number', paymentMethod.CardNum);
+        option.setAttribute('data-card-number', paymentMethod.FullCardNum);
         console.log(paymentMethod.NameOnCard);
         dropdown.appendChild(option);
       });
@@ -191,13 +191,11 @@ function loadPaymentMethods() {
       const paymentMethods = [];
       
       data.paymentMethods.forEach(paymentMethodData => {
-        // Extract the last four digits of the CardNum
-        const lastFour = paymentMethodData.CardNum.slice(-4);
         // Construct a payment method object
         const paymentMethod = {
           type: 'Card', 
           cardID: paymentMethodData.CardID,
-          lastFour: lastFour,
+          lastFour: paymentMethodData.CardNum,
           expiry: paymentMethodData.Expiry 
         };
         // Push the payment method object into the array
