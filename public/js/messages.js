@@ -171,3 +171,56 @@ function populateAnnouncement(announcements) {
     });
 }
 
+async function loadMessagePreviews(type) {
+    try {
+      const response = await fetch(`http://localhost:5000/message/get-messages`, {
+        method: 'GET',
+        credentials: 'include' // If your endpoint requires authentication
+      });
+      const data = await response.json();
+  
+      if (data.success && data.messages) {
+        const messagesContainer = document.querySelector('.messages-preview-container ul');
+        messagesContainer.innerHTML = ''; 
+  
+        data.messages.forEach(message => {
+          const messagePreview = document.createElement('li');
+          messagePreview.className = 'group block w-full px-8 py-6 hover:bg-gray-700 border-l-4 border-transparent hover:border-blue-500';
+          messagePreview.innerHTML = `
+            <div class="text-left">
+              <div class="font-bold text-sm text-gray-300">${message.Subject}</div>
+              <div class="text-white-400 text-xs">${message.Message.substring(0, 30)}...</div> <!-- Display a snippet -->
+              <div class="text-white-400 text-xs mt-2">${new Date(message.TimeStamp).toLocaleString()}</div>
+            </div>
+          `;
+          // Add a click event listener to each message preview
+          messagePreview.addEventListener('click', () => displayMessageDetails(message), type);
+          messagesContainer.appendChild(messagePreview);
+        });
+      } else {
+        console.error('Failed to fetch messages:', data.message);
+        // Handle no messages or errors
+      }
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+      // Handle network errors or other issues here
+    }
+  }
+
+
+  function displayMessageDetails(message, type) {
+    const messageDetailsContainer = document.querySelector('.message-details-container');
+    // Clear out any existing message details
+    messageDetailsContainer.innerHTML = '';
+    
+    // Create and append new details
+    const messageContent = document.createElement('div');
+    messageContent.className = 'message-content';
+    messageContent.innerHTML = `
+      <h3 class="text-white font-semibold leading-6 mb-1">${message.Subject}</h3>
+      <p class="text-sm text-gray-300 leading-normal">${message.Message}</p>
+      <p class="text-sm text-gray-300 mt-2">From: ${message.SenderUserID} | Date: ${new Date(message.TimeStamp).toLocaleString()}</p>
+    `;
+    messageDetailsContainer.appendChild(messageContent);
+  }
+

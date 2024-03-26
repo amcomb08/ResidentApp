@@ -79,7 +79,7 @@ function createAdminHeader() {
     // Define the menu items
     const menuItems = [
         { text: 'Home', href: 'adminindex.html' },
-        { text: 'Messages', href: '../messages.html'},
+        { text: 'Messages', href: 'adminmessages.html'},
         { text: 'Payment Manager', href: 'sendpaymentdue.html' },
         {
             text: 'Community Manager',
