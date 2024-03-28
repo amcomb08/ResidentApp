@@ -1,5 +1,6 @@
 const mysql = require('mysql2');
 const fs = require('fs');
+const path = require('path');
 const sslCertificatePath = path.join(__dirname, 'certs', 'DigiCertGlobalRootCA.crt.pem');
 const sslCertificate = fs.readFileSync(sslCertificatePath);
 
