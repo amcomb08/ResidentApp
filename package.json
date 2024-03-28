@@ -13,7 +13,7 @@
     "css-compile": "tailwindcss build -i src/tailwind/tailwind.css -c src/tailwind/tailwind.config.js -o public/css/tailwind/tailwind.css",
     "css-minified": "tailwindcss build -i src/tailwind/tailwind.css -c src/tailwind/tailwind.config.js -o public/css/tailwind/tailwind.min.css --minify",
     "css": "npm-run-all --sequential css-*",
-    "build": "node node_modules/.bin/npm-run-all --sequential clean copy-* css",
+    "build": "npm-run-all --sequential clean copy-* css",
     "watch": "npm-run-all build --parallel watch-templates watch-css browsersync",
     "watch-templates": "nodemon --watch ./src/html/ -e html -x \"cpx \"src/html/*.html\" public/\"",
     "watch-css": "tailwindcss build -i src/tailwind/tailwind.css -c src/tailwind/tailwind.config.js -o public/css/tailwind/tailwind.min.css --minify --watch",
