@@ -1,6 +1,6 @@
 const mysql = require('mysql2');
 const fs = require('fs');
-const sslCertificatePath = path.join(__dirname, '..', 'certs', 'DigiCertGlobalRootCA.crt.pem');
+const sslCertificatePath = path.join(__dirname, '..', '..', 'certs', 'DigiCertGlobalRootCA.crt.pem');
 const sslCertificate = fs.readFileSync(sslCertificatePath);
 
 // Database connection pool setup
