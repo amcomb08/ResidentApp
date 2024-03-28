@@ -1,0 +1,31 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: 'CULTUREAPP'
+      MYSQL_DATABASE: 'culture-app-db'
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d
+      - my-db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  app:  # Define your application service
+    image: amcombs2000/my-app:latest  # Change this to your Docker Hub repository
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: 'CULTUREAPP'
+      DB_NAME: 'culture-app-db'
+    ports:
+      - "5005:5005"
+    depends_on:
+      - mysql
+
+volumes:
+  my-db:
