@@ -18,16 +18,13 @@ const port = 5000;
 
 // CORS middleware setup
 app.use(cors({
-    origin: 'http://localhost:8080',
+    origin: 'residentapplication.azurewebsites.net',
     credentials: true
   }));
 
-// Middleware
-app.use(bodyParser.json());
-
-// Serve static files from the 'public' directory
-app.use(express.static(path.join(__dirname, 'public')));
-
+// Parse JSON and URL-encoded bodies
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Root path for health check
 app.get('/', (req, res) => {
@@ -36,10 +33,19 @@ app.get('/', (req, res) => {
 });
 
 app.use(session({
-    secret: 'secret',
-    resave: true,
-    saveUninitialized: true
+    secret: 'test1234abCDEFG5678hijklmnop', // replace with a strong random secret
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: 'auto', httpOnly: true } // set secure to true if you are using https
 }));
+
+// Serve static files from the root directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Send index.html for the root route
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 // Example of logging incoming requests
 app.use((req, res, next) => {
@@ -54,6 +60,9 @@ app.use((req, res, next) => {
   });
 
 app.use(express.json()); // To handle JSON payloads
+
+// Middleware
+app.use(bodyParser.json());
 
 
 const db = require('./routes/db');
