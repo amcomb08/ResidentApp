@@ -17,7 +17,7 @@ async function sendMaintenanceRequest() {
     }
     
     // If all fields are filled, proceed with the fetch request
-    let response = await fetch('http://residentapplication.azurewebsites.net/message/send-maintenance-request', {
+    let response = await fetch('https://residentapplication.azurewebsites.net/message/send-maintenance-request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(fields),
@@ -53,7 +53,7 @@ async function sendContactMessage() {
     }
     
     // If all fields are filled, proceed with the fetch request
-    let response = await fetch('http://residentapplication.azurewebsites.net/message/send-contact-message', {
+    let response = await fetch('https://residentapplication.azurewebsites.net/message/send-contact-message', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(fields),
@@ -73,7 +73,7 @@ async function sendContactMessage() {
 
 async function getEvents() {
     try {
-        let response = await fetch('http://residentapplication.azurewebsites.net/message/get-events', {
+        let response = await fetch('https://residentapplication.azurewebsites.net/message/get-events', {
             method: 'GET',
             credentials: 'include'
         });
@@ -130,7 +130,7 @@ function formatDate(dateString) {
 
 async function getAnnoucements() {
     try {
-        let response = await fetch('http://residentapplication.azurewebsites.net/message/get-announcements', {
+        let response = await fetch('https://residentapplication.azurewebsites.net/message/get-announcements', {
             method: 'GET',
             credentials: 'include' // If your endpoint requires authentication
         });
@@ -173,7 +173,7 @@ function populateAnnouncement(announcements) {
 
 async function loadMessagePreviews(type) {
     try {
-      const response = await fetch(`http://residentapplication.azurewebsites.net/message/get-messages`, {
+      const response = await fetch(`https://residentapplication.azurewebsites.net/message/get-messages`, {
         method: 'GET',
         credentials: 'include' // If your endpoint requires authentication
       });

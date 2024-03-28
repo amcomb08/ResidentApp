@@ -1,6 +1,6 @@
 // Define the logout function
 function logoutUser() {
-    fetch('http://residentapplication.azurewebsites.net/logout', { credentials: 'include', method: 'POST' })
+    fetch('https://residentapplication.azurewebsites.net/logout', { credentials: 'include', method: 'POST' })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
@@ -24,7 +24,7 @@ function showDropdown(type) {
 
 function checkLogin(role){
     window.onload = function() {
-        fetch('http://residentapplication.azurewebsites.net/login/checkLogin', { credentials: 'include' })
+        fetch('https://residentapplication.azurewebsites.net/login/checkLogin', { credentials: 'include' })
         .then(response => response.json())
         .then(data => {
             if (!data.loggedin || (data.userRole !== role && data.userRole !== 'DevTest' && data.userRole !== 'AnyUser')) {
