@@ -28,6 +28,7 @@
     "express-session": "^1.18.0",
     "mysql2": "^3.9.1",
     "nodemailer": "^6.9.9",
+    "run-all": "^1.0.1",
     "tailwindcss": "^3.0.7"
   },
   "devDependencies": {
