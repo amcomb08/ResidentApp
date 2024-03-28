@@ -39,6 +39,9 @@ steps:
   displayName: 'Start MySQL Container'
   workingDirectory: $(Build.SourcesDirectory)
 
+- script: chmod +x ./node_modules/.bin/*
+  displayName: 'Set execute permissions for binaries'
+
 - script: |
     npm test
   displayName: 'Run tests'
