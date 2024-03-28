@@ -14,7 +14,7 @@ const adminRoutes = require('./routes/adminRoutes');
 const communityAdminRoutes = require('./routes/communityAdminRoutes');
 
 const app = express();
-const port = 5000;
+const port = process.env.PORT || 5000;
 
 // CORS middleware setup
 app.use(cors({
@@ -25,12 +25,6 @@ app.use(cors({
 // Parse JSON and URL-encoded bodies
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Root path for health check
-app.get('/', (req, res) => {
-    res.status(200).send('Hello World!');
-
-});
 
 app.use(session({
     secret: 'test1234abCDEFG5678hijklmnop', // replace with a strong random secret
@@ -93,7 +87,8 @@ app.post('/logout', (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server started on http://localhost:${port}`);
-});
+    console.log(`Server started on: ${port}`);
+  });
+  
 
 module.exports = { app, db };
