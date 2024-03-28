@@ -1,0 +1,49 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '20.9.0'
+  displayName: 'Install Node.js v20.9.0'
+  
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.x'
+    addToPath: true
+  displayName: 'Install Python'
+
+- script: |
+    npm install
+  displayName: 'npm install'
+
+- script: |
+    mkdir -p sql
+    curl -L "https://residentappstorage.blob.core.windows.net/sql/Database.sql" -o sql/Database.sql --header "x-ms-blob-type: BlockBlob" --header "Authorization: Bearer $(StorageAccessKey)"
+  displayName: 'Download SQL file'
+  workingDirectory: $(Build.SourcesDirectory)
+  env:
+    StorageAccessKey: $(StorageAccessKey)
+
+- task: Docker@2
+  displayName: 'Login to Docker Registry'
+  inputs:
+    command: login
+    containerRegistry: 'Culture_Application_Registry'
+
+- script: |
+    docker-compose up -d
+  displayName: 'Start MySQL Container'
+  workingDirectory: $(Build.SourcesDirectory)
+
+- script: |
+    npm test
+  displayName: 'Run tests'
+
+- script: |
+    docker-compose down
+  displayName: 'Stop MySQL Container'
+  workingDirectory: $(Build.SourcesDirectory)
