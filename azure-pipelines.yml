@@ -32,7 +32,7 @@ steps:
   displayName: 'Login to Docker Registry'
   inputs:
     command: login
-    containerRegistry: 'Culture_Application_Registry'
+    containerRegistry: 'Resident_App_Registry'
 
 - script: |
     docker-compose up -d
