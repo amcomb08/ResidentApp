@@ -18,7 +18,7 @@
     "watch-templates": "nodemon --watch ./src/html/ -e html -x \"cpx \"src/html/*.html\" public/\"",
     "watch-css": "tailwindcss build -i src/tailwind/tailwind.css -c src/tailwind/tailwind.config.js -o public/css/tailwind/tailwind.min.css --minify --watch",
     "start": "node server.js",
-    "test": "mocha --experimental-modules ./test/*.test.js --timeout 10000"
+    "test": "npx mocha --experimental-modules ./test/*.test.js --timeout 10000"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
