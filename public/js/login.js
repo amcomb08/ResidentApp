@@ -2,7 +2,7 @@ function submitForgotPassword(){
     document.getElementById('forgotPasswordForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         let email = document.getElementById('userEmail').value;
-        let response = await fetch('http://localhost:5000/login/send-reset-code', {
+        let response = await fetch('http://residentapplication.azurewebsites.net/login/send-reset-code', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email }),
@@ -33,7 +33,7 @@ function submitForgotPassword(){
                 let verificationCode = document.getElementById('verificationCode').value;
                 
                 // Send the verification code to the server
-                let verifyResponse = await fetch('http://localhost:5000/login/verify-reset-code', {
+                let verifyResponse = await fetch('http://residentapplication.azurewebsites.net/login/verify-reset-code', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, verificationCode }),
@@ -69,7 +69,7 @@ function loginButton(){
 
         let username = document.getElementById('email').value;
         let password = document.getElementById('password').value;
-        let response = await fetch('http://localhost:5000/login/login', {
+        let response = await fetch('http://residentapplication.azurewebsites.net/login/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password }),
@@ -97,7 +97,7 @@ function submitChangePassword(){
         const changeType = params.get('type');
         let newPassword = document.getElementById('newPassword').value;
         let confirmNewPassword = document.getElementById('confirmNewPassword').value;
-        let response = await fetch('http://localhost:5000/login/changepassword', {
+        let response = await fetch('http://residentapplication.azurewebsites.net/login/changepassword', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ newPassword,confirmNewPassword, changeType }),

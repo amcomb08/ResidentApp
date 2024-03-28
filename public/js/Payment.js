@@ -22,7 +22,7 @@ function isValidData(data) {
 }
 
 function getPaymentsMadeThisMonth() {
-  fetch('http://localhost:5000/payments/getPaymentsMadeThisMonth', {
+  fetch('http://residentapplication.azurewebsites.net/payments/getPaymentsMadeThisMonth', {
       credentials: 'include'
   })
   .then(response => response.json())
@@ -69,7 +69,7 @@ function fillPaymentDropdown() {
   const dropdown = document.getElementById('paymentDropdown');
   
   // Fetch the payment method nicknames from the server
-  fetch('http://localhost:5000/payments/getPaymentMethods', {
+  fetch('http://residentapplication.azurewebsites.net/payments/getPaymentMethods', {
     credentials: 'include' 
   })
   .then(response => response.json())
@@ -98,7 +98,7 @@ function fillPaymentDropdown() {
 }
 
 function getPaymentDue() {
-  fetch('http://localhost:5000/payments/getPaymentDue', {
+  fetch('http://residentapplication.azurewebsites.net/payments/getPaymentDue', {
       credentials: 'include' // Important for sessions
   })
   .then(response => response.json())
@@ -133,7 +133,7 @@ async function submitPayment() {
   }
 
   try {
-    let response = await fetch('http://localhost:5000/payments/makePayment', {
+    let response = await fetch('http://residentapplication.azurewebsites.net/payments/makePayment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ paymentMethod, paymentAmount }),
@@ -146,7 +146,7 @@ async function submitPayment() {
         let paymentNote = document.getElementById('paymentNote').value.trim();
         let paymentDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-        let paymentHistoryResponse = await fetch('http://localhost:5000/payments/updatePaymentHistory', {
+        let paymentHistoryResponse = await fetch('http://residentapplication.azurewebsites.net/payments/updatePaymentHistory', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -182,7 +182,7 @@ async function submitPayment() {
 function loadPaymentMethods() {
   
   // Fetch the payment method nicknames from the server
-  fetch('http://localhost:5000/payments/getPaymentMethods', {
+  fetch('http://residentapplication.azurewebsites.net/payments/getPaymentMethods', {
     credentials: 'include'
   })
   .then(response => response.json())
@@ -234,7 +234,7 @@ function loadPaymentMethods() {
 
 function loadPaymentHistory() { 
   // Fetch the payment method nicknames from the server
-  fetch('http://localhost:5000/payments/getPaymentHistory', {
+  fetch('http://residentapplication.azurewebsites.net/payments/getPaymentHistory', {
     credentials: 'include'
   })
   .then(response => response.json())
@@ -292,7 +292,7 @@ function deletePaymentMethod(cardID) {
   console.log('Deleting payment method with CardID:', cardID);
 
   // Fetch the payment method nicknames from the server
-  fetch('http://localhost:5000/payments/deletePaymentMethod', {
+  fetch('http://residentapplication.azurewebsites.net/payments/deletePaymentMethod', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({cardID}),
@@ -359,7 +359,7 @@ async function savePaymentClicked() { //Executes once save is clicked on the add
     if(validCard){
         try {
           // You need to await the fetch call to complete
-          let response = await fetch('http://localhost:5000/payments/addpayment', {
+          let response = await fetch('http://residentapplication.azurewebsites.net/payments/addpayment', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(dataToInsert),

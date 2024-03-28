@@ -12,7 +12,7 @@ function isValidData(data) {
 
 function loadAmenities() {
     // Fetch the amenities from the server
-    fetch('http://localhost:5000/reservation/getAmenities', {
+    fetch('http://residentapplication.azurewebsites.net/reservation/getAmenities', {
       credentials: 'include'
     })
     .then(response => response.json())
@@ -42,7 +42,7 @@ function loadAmenities() {
   }
 
   function fetchAmenitySchedule(amenityId) {
-    fetch(`http://localhost:5000/reservation/getAmenitySchedule/${amenityId}`, {
+    fetch(`http://residentapplication.azurewebsites.net/reservation/getAmenitySchedule/${amenityId}`, {
         credentials: 'include'
     })
     .then(response => response.json())
@@ -142,7 +142,7 @@ async function reserveSlot() { //Executes once save is clicked on the addpayment
   if (isValidData(dataToInsert)) {
     try {
       // You need to await the fetch call to complete
-      let response = await fetch('http://localhost:5000/reservation/makeReservation', {
+      let response = await fetch('http://residentapplication.azurewebsites.net/reservation/makeReservation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToInsert),
