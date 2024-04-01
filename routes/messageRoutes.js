@@ -20,7 +20,7 @@ router.post('/send-maintenance-request', (req, res) => {
     const apartment = req.session.apartmentNumber;
     const maintenanceEmail = 'amcombs2000@gmail.com'; // Change this to the email of the maintenance person
     const senderID = req.session.userId;
-    const receiverID = 5; // Change this to the ID of the maintenance person
+    const receiverID = 1; // Change this to the account ID of the maintenance person
     const messageText = `${firstName} ${lastName} has put in a maintence request for apartment ${apartment}. The details are as follows: ${details}. You can contact them at ${email} or ${phone}`
 
     // Define mail options
@@ -121,7 +121,7 @@ router.post('/send-contact-message', (req, res) => {
     const apartment = req.session.apartmentNumber;
     const maintenanceEmail = 'amcombs2000@gmail.com'; // Change this to the email of the contact person
     const senderID = req.session.userId;
-    const receiverID = 5; // Change this to the ID of the maintenance person
+    const receiverID = 1; // Change this to the account ID of the contact person
     const messageText = `${firstName} ${lastName} from apartment ${apartment} has requested to contact you. The details are as follows: ${message}. You can contact them at ${email} or ${phone}`
 
         // Define mail options

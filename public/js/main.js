@@ -193,6 +193,9 @@ function createHeader() {
             text: 'All Options',
             dropdown: [
                 { text: 'Change Password', href: 'changepassword.html?type=loggedIn' },
+                { text: 'Maintenance Request', href: 'maintenance.html' },
+                { text: 'Contact Us', href: 'contactus.html' },
+                { text: 'Reserve Amenity', href: 'amenities.html' },
             ]
         }
     ];
