@@ -65,7 +65,7 @@ async function submitCreateEvent() {
         eventElement.className = "block p-4 mb-4 bg-gray-600 rounded-xl hover:bg-gray-700 transition duration-200";
   
         eventElement.innerHTML = `
-            <h4 id="eventName" class="text-white font-semibold leading-6 mb-1">${event.EventName}</h4>
+            <h4 id="eventNameType" class="text-white font-semibold leading-6 mb-1">${event.EventName}</h4>
             <div class="flex items-center mb-4">
                 <span class="h-2 w-2 mr-1 bg-pink-400 rounded-full"></span>
                 <span class="text-xs font-medium text-pink-400">${event.EventLocation}</span>
