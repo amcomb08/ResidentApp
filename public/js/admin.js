@@ -9,11 +9,6 @@ function isValidData(data) {
     return true; 
 }
 
-function formatDate(dateString) {
-  const options = { year: 'numeric', month: 'long', day: 'numeric' };
-  return new Date(dateString).toLocaleDateString(undefined, options);
-}
-
 async function modifyUserClicked(action) {
   let dataToInsert = {};
   let endpoint = '';

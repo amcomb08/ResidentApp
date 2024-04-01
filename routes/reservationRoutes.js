@@ -126,6 +126,42 @@ router.post('/makeReservation', (req, res) => {
     });
 });
 
+router.get('/getReservations', (req, res) => {
+    if (!req.session || !req.session.userId) {
+        return res.status(401).json({ success: false, message: 'User not logged in' });
+    }
+    const userID = req.session.userId;
+
+    // SQL query to join Reservations with UserAccounts, AmenitySchedules, and Amenities
+    const getReservationsQuery = `
+        SELECT 
+            R.UserID, R.ScheduleID, R.Status, R.ReservationID, 
+            UA.FirstName, UA.LastName, UA.PhoneNumber, UA.Email,
+            ASch.StartTime, ASch.EndTime, ASch.Date, ASch.AmenityID,
+            A.AmenityName
+        FROM Reservations R
+        INNER JOIN UserAccounts UA ON R.UserID = UA.UserID
+        INNER JOIN AmenitySchedules ASch ON R.ScheduleID = ASch.ScheduleID
+        INNER JOIN Amenities A ON ASch.AmenityID = A.AmenityID
+        WHERE R.Status = 'Confirmed'
+        AND R.UserID = ?
+    `;
+
+    db.query(getReservationsQuery,[userID],(err, reservationResults) => {
+        if (err) {
+            console.error('Failed to retrieve reservations:', err);
+            return res.status(500).json({ success: false, message: 'Failed to retrieve reservations.', error: err });
+        }
+
+        // If you get results, send them back to the client
+        if (reservationResults.length > 0) {
+            return res.json({ success: true, reservations: reservationResults });
+        } else {
+            return res.json({ success: false, message: 'No confirmed reservations found.' });
+        }
+    });
+});
+
 
 
 

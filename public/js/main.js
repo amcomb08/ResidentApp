@@ -22,6 +22,11 @@ function showDropdown(type) {
     dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
 }
 
+function formatDate(dateString) {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  }
+
 function checkLogin(role){
     window.onload = function() {
         fetch('https://residentapplication.azurewebsites.net/login/checkLogin', { credentials: 'include' })
@@ -196,6 +201,7 @@ function createHeader() {
                 { text: 'Maintenance Request', href: 'maintenance.html' },
                 { text: 'Contact Us', href: 'contactus.html' },
                 { text: 'Reserve Amenity', href: 'amenities.html' },
+                { text: 'View Reservations', href: 'reservations.html'}
             ]
         }
     ];
@@ -293,6 +299,33 @@ function initalizeNavBar(){
             dropdownMenu.style.display = 'none'; // Hide the dropdown
         }
     });
+}
+
+async function cancelReservation(ScheduleID, ReservationID) {
+  
+    try {
+      // You need to await the fetch call to complete
+      let response = await fetch('https://residentapplication.azurewebsites.net/communityAdmin/cancelReservation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ScheduleID: ScheduleID, ReservationID: ReservationID }),
+        credentials: 'include'
+      });
+      
+      // Also await the response.json() call to resolve
+      let data = await response.json();
+      
+      if (data.success) {
+        // Handle the success scenario, such as redirecting to a confirmation page
+        window.location = './index.html';
+      } else {
+        // Handle the failure scenario
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred while processing your request.');
+    }
 }
 
 

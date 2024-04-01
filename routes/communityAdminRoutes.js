@@ -317,6 +317,7 @@ router.get('/getAmenities', (req, res) => {
         }
     
         // SQL query to join Reservations with UserAccounts, AmenitySchedules, and Amenities
+        // and check that ASch.Date is today or in the future
         const getReservationsQuery = `
             SELECT 
                 R.UserID, R.ScheduleID, R.Status, R.ReservationID, 
@@ -328,6 +329,7 @@ router.get('/getAmenities', (req, res) => {
             INNER JOIN AmenitySchedules ASch ON R.ScheduleID = ASch.ScheduleID
             INNER JOIN Amenities A ON ASch.AmenityID = A.AmenityID
             WHERE R.Status = 'Confirmed'
+            AND ASch.Date >= CURDATE()
         `;
     
         db.query(getReservationsQuery, (err, reservationResults) => {
@@ -344,6 +346,7 @@ router.get('/getAmenities', (req, res) => {
             }
         });
     });
+    
     
     router.post('/cancelReservation', (req, res) => {
         if (!req.session || !req.session.userId) {
