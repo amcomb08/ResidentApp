@@ -1,0 +1,2 @@
+A management application for apartment managers and residents that allows users to do things such as pay rent, put in maintenance requests, receive alerts, and other relevant features. This app uses JavaScript node.js framework to support the front/backend, and a DB using MySql that stores relevant tables.
+Spec doument: https://docs.google.com/document/d/12j7D_urM7aJwMs8GMcMdFkAfySO5U9pwedtSAfM1EZ4/edit?usp=sharing
