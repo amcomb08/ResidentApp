@@ -119,22 +119,102 @@ router.post('/send-maintenance-request', (req, res) => {
 router.post('/send-contact-message', (req, res) => {
     const { firstName, lastName, email, phone, message } = req.body;
     const apartment = req.session.apartmentNumber;
+    const maintenanceEmail = 'amcombs2000@gmail.com'; // Change this to the email of the contact person
+    const senderID = req.session.userId;
+    const receiverID = 5; // Change this to the ID of the maintenance person
+    const messageText = `${firstName} ${lastName} from apartment ${apartment} has requested to contact you. The details are as follows: ${message}. You can contact them at ${email} or ${phone}`
 
         // Define mail options
         const mailOptions = {
             from: 'CSE696ResidentApp@gmail.com',
-            to: 'amcombs2000@gmail.com',
+            to: maintenanceEmail,
             subject: "Contact Message",
-            text: `${firstName} ${lastName} from apartment ${apartment} has requested to contact you. The details are as follows: ${message}. You can contact them at ${email} or ${phone}`
+            text: messageText
         };
 
-        // Send email with the token
-        transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                console.error('Error sending email:', error);
-                return res.json({ success: false, message: 'Failed to send email.' });
+    // Send email with the token
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.error('Error sending email:', error);
+            return res.json({ success: false, message: 'Failed to send email.' });
+        }
+        // Get a connection from the pool
+        db.getConnection((err, connection) => {
+            if (err) {
+                return res.json({ success: false, message: 'Error getting database connection.' });
             }
+            // Start a new transaction
+            connection.beginTransaction(err => {
+                if (err) {
+                    connection.release();
+                    return res.json({ success: false, message: 'Error starting transaction.' });
+                }
+                    const insertQuery = `
+                    INSERT INTO Messages (
+                        SenderUserID,
+                        ReceiverID,
+                        Subject,
+                        Message,
+                        TimeStamp,
+                        MessageType
+                    ) VALUES (? , ? , ? , ? , ? , ?);
+                `;
+
+                    // Execute the insert query
+                    connection.query(insertQuery, [
+                        senderID,
+                        receiverID,
+                        "Contact Request",
+                        messageText,
+                        new Date(),
+                        "Contact"
+                    ], (err, results) => {
+                        if (err) {
+                            console.error('Database update error:', err);
+                            connection.rollback(() => {
+                                connection.release();
+                                return res.json({ success: false, message: 'Database update error.' });
+                            });
+                            return;
+                        }
+                    });
+
+                    connection.query(insertQuery, [
+                        receiverID,
+                        senderID,
+                        "Contact Request",
+                        "Your contact Request has been sent to the team. They will contact you soon.",
+                        new Date(),
+                        "Maintenance"
+                    ], (err, results) => {
+                        if (err) {
+                            console.error('Database update error:', err);
+                            connection.rollback(() => {
+                                connection.release();
+                                return res.json({ success: false, message: 'Database update error.' });
+                            });
+                            return;
+                        }
+                    });
+
+                    // Commit the transaction
+                    connection.commit(err => {
+                        if (err) {
+                            console.error('Error committing transaction:', err);
+                            connection.rollback(() => {
+                                connection.release();
+                                return res.json({ success: false, message: 'Error committing transaction.' });
+                            });
+                            return;
+                        }
+
+                        // Release the connection and send a successful response
+                        connection.release();
+                        res.json({ success: true, message: 'Messages successfully sent' });
+                    });
+            });
         });
+    });
 });
 
 router.get('/get-events', (req, res) => {
