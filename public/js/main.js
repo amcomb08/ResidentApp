@@ -100,6 +100,7 @@ function createAdminHeader() {
             dropdown: [
                 { text: 'Add User', href: 'adduser.html' },
                 { text: 'Remove User', href: 'removeuser.html' },
+                { text: 'Manage apartments', href: 'apartments.html'},
             ]
         }
     ];
