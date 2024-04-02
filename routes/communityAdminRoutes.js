@@ -432,16 +432,17 @@ router.get('/getAmenities', (req, res) => {
         // SQL query to fetch all apartments with the names and the current total amount due
         // where an ApartmentNumber is assigned. If there is no balance, it defaults to 0.
         const getApartmentsQuery = `
-            SELECT 
+                SELECT 
                 A.ApartmentNumber,
                 GROUP_CONCAT(DISTINCT UA.FirstName, ' ', UA.LastName SEPARATOR ', ') AS Names,
                 GROUP_CONCAT(DISTINCT UA.Email SEPARATOR ', ') AS Emails,
-                COALESCE(AB.TotalAmountDue, 0) AS TotalAmountDue
+                COALESCE(AB.TotalAmountDue, 0) AS TotalAmountDue,
+                A.LeaseEndDate  -- Assuming LeaseEndDate is a column in the Apartments table
             FROM Apartments A
             INNER JOIN UserAccounts UA ON A.ApartmentNumber = UA.ApartmentNumber
             LEFT JOIN ApartmentBalances AB ON A.ApartmentNumber = AB.ApartmentNumber
             WHERE UA.ApartmentNumber IS NOT NULL AND UA.ApartmentNumber != ''
-            GROUP BY A.ApartmentNumber
+            GROUP BY A.ApartmentNumber, A.LeaseEndDate
             ORDER BY A.ApartmentNumber;
         `;
 

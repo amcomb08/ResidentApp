@@ -8,7 +8,6 @@ const crypto = require('crypto');
 
 
 router.post('/addUser', (req, res) => {
-    // Check if the user is logged in and has a session
     if (!req.session || !req.session.userId) {
         return res.json({ success: false, message: 'User is not logged in.' });
     }
@@ -23,47 +22,127 @@ router.post('/addUser', (req, res) => {
         DefaultPass
     } = req.body;
 
-    // Construct the insert query
-    const insertQuery = `
-        INSERT INTO UserAccounts (
-            UserRole,
-            Email,
-            Password,
-            FirstName,
-            LastName,
-            PhoneNumber,
-            ApartmentNumber
-        ) VALUES (?, ?, ?, ?, ?, ?, ?)
-    `;
-    
-    //Hash the default password
-    bcrypt.hash(DefaultPass, 10, (err, hash) => {
+    // Get a connection from the pool
+    db.getConnection((err, connection) => {
         if (err) {
-            console.error('Error hashing password:', err);
-            return res.json({ success: false, message: 'Error hashing password.' });
+            console.error('Error getting database connection:', err);
+            return res.json({ success: false, message: 'Error getting database connection.' });
         }
-        const hashedPass = hash;
 
-        // Execute the insert query
-        db.query(insertQuery, [
-            Role,
-            Email,
-            hashedPass,
-            FirstName,
-            LastName,
-            Phone,
-            ApartmentNumber
-        ], (err, results) => {
+        // Hash the default password
+        bcrypt.hash(DefaultPass, 10, (err, hash) => {
             if (err) {
-                console.error('Database insert error:', err);
-                return res.json({ success: false, message: 'Database insert error.' });
+                console.error('Error hashing password:', err);
+                connection.release();
+                return res.json({ success: false, message: 'Error hashing password.' });
             }
+            const hashedPass = hash;
 
-            // Successfully inserted data
-            return res.json({ success: true, message: 'User added successfully.' });
+            // Start a transaction
+            connection.beginTransaction((err) => {
+                if (err) {
+                    console.error('Transaction start error:', err);
+                    connection.release();
+                    return res.json({ success: false, message: 'Transaction start error.' });
+                }
+
+                // Execute the insert query
+                const insertQuery = `
+                    INSERT INTO UserAccounts (
+                        UserRole,
+                        Email,
+                        Password,
+                        FirstName,
+                        LastName,
+                        PhoneNumber,
+                        ApartmentNumber
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                `;
+                connection.query(insertQuery, [
+                    Role,
+                    Email,
+                    hashedPass,
+                    FirstName,
+                    LastName,
+                    Phone,
+                    ApartmentNumber
+                ], (err, results) => {
+                    if (err) {
+                        console.error('Database insert error:', err);
+                        connection.rollback(() => {
+                            connection.release();
+                            return res.json({ success: false, message: 'Database insert error.' });
+                        });
+                        return;
+                    }
+
+                    // Check if the apartment is not occupied
+                    const checkOccupiedQuery = `
+                        SELECT IsOccupied FROM Apartments WHERE ApartmentNumber = ?
+                    `;
+                    connection.query(checkOccupiedQuery, [ApartmentNumber], (err, apartments) => {
+                        if (err) {
+                            console.error('Error checking apartment occupation status:', err);
+                            connection.rollback(() => {
+                                connection.release();
+                                return res.json({ success: false, message: 'Error checking apartment occupation status.' });
+                            });
+                            return;
+                        }
+
+                        if (apartments.length > 0 && apartments[0].IsOccupied === 0) {
+                            // Update the IsOccupied status
+                            const updateOccupiedQuery = `
+                                UPDATE Apartments SET IsOccupied = 1 WHERE ApartmentNumber = ?
+                            `;
+                            connection.query(updateOccupiedQuery, [ApartmentNumber], (err, updateResults) => {
+                                if (err) {
+                                    console.error('Error updating apartment occupation status:', err);
+                                    connection.rollback(() => {
+                                        connection.release();
+                                        return res.json({ success: false, message: 'Error updating apartment occupation status.' });
+                                    });
+                                    return;
+                                }
+
+                                // Commit the transaction
+                                connection.commit((err) => {
+                                    if (err) {
+                                        console.error('Error committing transaction:', err);
+                                        connection.rollback(() => {
+                                            connection.release();
+                                            return res.json({ success: false, message: 'Error during transaction commit.' });
+                                        });
+                                        return;
+                                    }
+
+                                    connection.release();
+                                    return res.json({ success: true, message: 'User added and apartment status updated successfully.' });
+                                });
+                            });
+                        } else {
+                            // Apartment is already occupied or doesn't exist, just commit the transaction
+                            connection.commit((err) => {
+                                if (err) {
+                                    console.error('Error committing transaction:', err);
+                                    connection.rollback(() => {
+                                        connection.release();
+                                        return res.json({ success: false, message: 'Error during transaction commit.' });
+                                    });
+                                    return;
+                                }
+
+                                connection.release();
+                                return res.json({ success: true, message: 'User added successfully.' });
+                            });
+                        }
+                    });
+                });
+            });
         });
     });
 });
+
 
 router.post('/deleteUser', (req, res) => {
     // Check if the user is logged in and has a session
@@ -123,7 +202,6 @@ router.post('/submitMonthly', (req, res) => {
                 return res.json({ success: false, message: 'Error starting transaction.' });
             }
 
-            const PAYMENT_AMOUNT = 1300;
             const thirtyDaysAgo = new Date();
             thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
             const formattedDate = thirtyDaysAgo.toISOString().slice(0, 19).replace('T', ' ');
@@ -150,7 +228,15 @@ router.post('/submitMonthly', (req, res) => {
                     return 
                 }
 
-                const apartmentQuery = `SELECT DISTINCT ApartmentNumber FROM UserAccounts WHERE ApartmentNumber IS NOT NULL`;
+                const apartmentQuery = `
+                    SELECT 
+                    UA.ApartmentNumber,
+                    A.Rent
+                    FROM UserAccounts UA
+                    JOIN Apartments A ON UA.ApartmentNumber = A.ApartmentNumber
+                    WHERE UA.ApartmentNumber IS NOT NULL
+                    GROUP BY UA.ApartmentNumber, A.Rent
+                `;
                 connection.query(apartmentQuery, (err, apartments) => {
                     if (err) {
                         connection.rollback(() => {
@@ -167,7 +253,7 @@ router.post('/submitMonthly', (req, res) => {
                     const paymentsData = apartments.map(apartment => [
                         formattedDueDate,
                         apartment.ApartmentNumber,
-                        PAYMENT_AMOUNT,
+                        apartment.Rent,
                         1,
                         'Monthly payment'
                     ]);
@@ -196,7 +282,7 @@ router.post('/submitMonthly', (req, res) => {
                                     ON DUPLICATE KEY UPDATE TotalAmountDue = TotalAmountDue + VALUES(TotalAmountDue);
                                 `;
                     
-                                connection.query(updateBalanceQuery, [apartment.ApartmentNumber, PAYMENT_AMOUNT], (err, updateResults) => {
+                                connection.query(updateBalanceQuery, [apartment.ApartmentNumber, apartment.Rent], (err, updateResults) => {
                                     if (err) {
                                         return reject(err);
                                     }

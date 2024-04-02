@@ -452,6 +452,9 @@ function populateApartments(apartments) {
     const apartmentElement = document.createElement('div');
     apartmentElement.className = "block p-4 mb-4 bg-gray-600 rounded-xl hover:bg-gray-700 transition duration-200";
 
+    // Format the LeaseEndDate using formatDate function
+    const formattedLeaseEndDate = apartment.LeaseEndDate ? formatDate(apartment.LeaseEndDate) : 'Not Available';
+
     apartmentElement.innerHTML = `
       <h4 class="text-white font-semibold leading-6 mb-1">Apartment: ${apartment.ApartmentNumber}</h4>
       <div class="flex items-center mb-4">
@@ -462,9 +465,35 @@ function populateApartments(apartments) {
           <span class="h-2 w-2 mr-1 bg-blue-400 rounded-full"></span>
           <span class="text-xs font-medium text-blue-400">Emails: ${apartment.Emails}</span>
       </div>
+      <div class="flex items-center mb-4">
+          <span class="h-2 w-2 mr-1 bg-yellow-400 rounded-full"></span>
+          <span class="text-xs font-medium text-yellow-400">Lease End Date: ${formattedLeaseEndDate}</span>
+      </div>
       <p class="text-xs text-gray-300 leading-normal mb-10">Total Amount Due: $${apartment.TotalAmountDue}</p>
     `;
+
+    // Create the "Renew Lease" button
+    const renewLeaseButton = document.createElement('button');
+    renewLeaseButton.textContent = 'Renew Lease';
+    renewLeaseButton.className = "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded";
+    renewLeaseButton.addEventListener('click', () => {
+      console.log('Lease extended 1 year for apartment:', apartment.ApartmentNumber);
+    });
+
+    // Create the "End Lease" button
+    const endLeaseButton = document.createElement('button');
+    endLeaseButton.textContent = 'End Lease';
+    endLeaseButton.className = "bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-4";
+    endLeaseButton.addEventListener('click', () => {
+      console.log('Lease ended for apartment:', apartment.ApartmentNumber);
+    });
+
+    // Append the buttons to the apartmentElement
+    apartmentElement.appendChild(renewLeaseButton);
+    apartmentElement.appendChild(endLeaseButton);
 
     apartmentsContainer.appendChild(apartmentElement);
   });
 }
+
+
