@@ -474,18 +474,19 @@ function populateApartments(apartments) {
 
     // Create the "Renew Lease" button
     const renewLeaseButton = document.createElement('button');
-    renewLeaseButton.textContent = 'Renew Lease';
+    renewLeaseButton.textContent = 'Update Lease';
     renewLeaseButton.className = "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded";
-    renewLeaseButton.addEventListener('click', () => {
-      console.log('Lease extended 1 year for apartment:', apartment.ApartmentNumber);
-    });
+    renewLeaseButton.onclick = () => createLeaseRenewalFields(apartmentElement, apartment.ApartmentNumber);
+    
+    // Append the "Renew Lease" button to the apartmentElement
+    apartmentElement.appendChild(renewLeaseButton);
 
     // Create the "End Lease" button
     const endLeaseButton = document.createElement('button');
     endLeaseButton.textContent = 'End Lease';
     endLeaseButton.className = "bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-4";
     endLeaseButton.addEventListener('click', () => {
-      console.log('Lease ended for apartment:', apartment.ApartmentNumber);
+      endLease(apartment.ApartmentNumber);
     });
 
     // Append the buttons to the apartmentElement
@@ -495,3 +496,100 @@ function populateApartments(apartments) {
     apartmentsContainer.appendChild(apartmentElement);
   });
 }
+
+function createLeaseRenewalFields(apartmentElement, apartmentNumber) {
+  // Remove existing renewal fields if any to prevent duplicates
+  const existingFields = apartmentElement.querySelector('.renewal-fields');
+  if (existingFields) apartmentElement.removeChild(existingFields);
+
+  // Create container for new fields
+  const fieldContainer = document.createElement('div');
+  fieldContainer.className = 'renewal-fields';
+  fieldContainer.style.display = 'flex';
+  fieldContainer.style.flexDirection = 'column';
+  fieldContainer.style.gap = '10px';
+
+  // New Lease Date input
+  const newLeaseDateInput = document.createElement('input');
+  newLeaseDateInput.type = 'date';
+  newLeaseDateInput.placeholder = 'New Lease Date';
+  newLeaseDateInput.className = 'new-lease-date-input';
+  newLeaseDateInput.style.marginTop = '20px';
+  newLeaseDateInput.style.padding = '10px'; 
+
+  // Rent Amount input
+  const rentAmountInput = document.createElement('input');
+  rentAmountInput.type = 'number';
+  rentAmountInput.placeholder = 'Rent Amount';
+  rentAmountInput.className = 'rent-amount-input';
+  rentAmountInput.style.padding = '10px';
+
+  // Confirm Button
+  const confirmButton = document.createElement('button');
+  confirmButton.textContent = 'Confirm';
+  confirmButton.className = 'confirm-button';
+  confirmButton.style.marginTop = '10px';
+  confirmButton.style.padding = '10px';
+  confirmButton.onclick = () => updateLease(apartmentNumber, newLeaseDateInput.value, rentAmountInput.value);
+
+  // Append fields and button to container, then container to the apartment element
+  fieldContainer.appendChild(newLeaseDateInput);
+  fieldContainer.appendChild(rentAmountInput);
+  fieldContainer.appendChild(confirmButton);
+  apartmentElement.appendChild(fieldContainer);
+}
+
+
+async function updateLease(apartmentNumber, newLeaseDate, rentAmount) {
+  try {
+    // You need to await the fetch call to complete
+    let response = await fetch('https://residentapplication.azurewebsites.net/communityAdmin/updateLease', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ApartmentNumber: apartmentNumber, NewLeaseDate: newLeaseDate, RentAmount: rentAmount }),
+      credentials: 'include'
+    });
+    
+    // Also await the response.json() call to resolve
+    let data = await response.json();
+    
+    if (data.success) {
+      // Handle the success scenario, such as redirecting to a confirmation page
+      window.location = './apartments.html';
+    } else {
+      // Handle the failure scenario
+      alert(data.message);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('An error occurred while processing your request.');
+  }
+}
+
+async function endLease(apartmentNumber) {
+  try {
+    // You need to await the fetch call to complete
+    let response = await fetch('https://residentapplication.azurewebsites.net/communityAdmin/endLease', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ApartmentNumber: apartmentNumber}),
+      credentials: 'include'
+    });
+    
+    // Also await the response.json() call to resolve
+    let data = await response.json();
+    
+    if (data.success) {
+      // Handle the success scenario, such as redirecting to a confirmation page
+      window.location = './apartments.html';
+    } else {
+      // Handle the failure scenario
+      alert(data.message);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('An error occurred while processing your request.');
+  }
+}
+
+

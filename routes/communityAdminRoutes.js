@@ -439,11 +439,12 @@ router.get('/getAmenities', (req, res) => {
                 GROUP_CONCAT(DISTINCT UA.FirstName, ' ', UA.LastName SEPARATOR ', ') AS Names,
                 GROUP_CONCAT(DISTINCT UA.Email SEPARATOR ', ') AS Emails,
                 COALESCE(AB.TotalAmountDue, 0) AS TotalAmountDue,
-                A.LeaseEndDate  -- Assuming LeaseEndDate is a column in the Apartments table
+                A.LeaseEndDate 
             FROM Apartments A
             INNER JOIN UserAccounts UA ON A.ApartmentNumber = UA.ApartmentNumber
             LEFT JOIN ApartmentBalances AB ON A.ApartmentNumber = AB.ApartmentNumber
             WHERE UA.ApartmentNumber IS NOT NULL AND UA.ApartmentNumber != ''
+            AND A.IsOccupied = 1
             GROUP BY A.ApartmentNumber, A.LeaseEndDate
             ORDER BY A.ApartmentNumber;
         `;
@@ -459,6 +460,48 @@ router.get('/getAmenities', (req, res) => {
             } else {
                 return res.json({ success: false, message: 'No apartments found.' });
             }
+        });
+    });
+
+    router.post('/updateLease', (req, res) => {
+        const userID = req.session.userId;
+        const {ApartmentNumber, NewLeaseDate, RentAmount} = req.body;
+
+        if (!userID) {
+            return res.status(401).json({ success: false, message: 'User not logged in' });
+        }
+    
+        const updateLeaseQuery = 'UPDATE Apartments SET LeaseEndDate = ?, Rent = ? WHERE ApartmentNumber = ?';
+    
+        db.query(updateLeaseQuery, [NewLeaseDate, RentAmount, ApartmentNumber], (err, updateLeaseResults) => {
+            if (err) {
+                console.error('Database error:', err);
+                return res.json({ success: false, message: 'Database error occurred.' });
+            }
+    
+            // Sending the payment methods directly
+            return res.json({ success: true, message: 'Success'  });
+        });
+    });
+
+    router.post('/endLease', (req, res) => {
+        const userID = req.session.userId;
+        const {ApartmentNumber} = req.body;
+
+        if (!userID) {
+            return res.status(401).json({ success: false, message: 'User not logged in' });
+        }
+    
+        const endLeaseQuery = 'UPDATE Apartments SET IsOccupied = ? WHERE ApartmentNumber = ?';
+    
+        db.query(endLeaseQuery, [0, ApartmentNumber], (err, endLeaseResults) => {
+            if (err) {
+                console.error('Database error:', err);
+                return res.json({ success: false, message: 'Database error occurred.' });
+            }
+    
+            // Sending the payment methods directly
+            return res.json({ success: true, message: 'Success'  });
         });
     });
     
