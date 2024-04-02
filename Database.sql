@@ -2,7 +2,10 @@
 CREATE TABLE Apartments (
     ApartmentNumber INT AUTO_INCREMENT PRIMARY KEY,
     Building VARCHAR(255) NOT NULL,
-    NumberOfRooms INT NOT NULL
+    NumberOfRooms INT NOT NULL,
+    IsOccupied BOOLEAN NOT NULL DEFAULT FALSE,
+    LeaseEndDate DATE,
+    Rent DECIMAL(10, 2) NOT NULL
 );
 
 --User Accounts

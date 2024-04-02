@@ -328,6 +328,7 @@ router.get('/getAmenities', (req, res) => {
             INNER JOIN AmenitySchedules ASch ON R.ScheduleID = ASch.ScheduleID
             INNER JOIN Amenities A ON ASch.AmenityID = A.AmenityID
             WHERE R.Status = 'Confirmed'
+            AND ASch.Date >= CURDATE()
         `;
     
         db.query(getReservationsQuery, (err, reservationResults) => {
@@ -420,6 +421,41 @@ router.get('/getAmenities', (req, res) => {
                     });
                 });
             });
+        });
+    });
+
+    router.get('/getApartments', (req, res) => {
+        if (!req.session || !req.session.userId) {
+            return res.status(401).json({ success: false, message: 'User not logged in' });
+        }
+
+        // SQL query to fetch all apartments with the names and the current total amount due
+        // where an ApartmentNumber is assigned. If there is no balance, it defaults to 0.
+        const getApartmentsQuery = `
+            SELECT 
+                A.ApartmentNumber,
+                GROUP_CONCAT(DISTINCT UA.FirstName, ' ', UA.LastName SEPARATOR ', ') AS Names,
+                GROUP_CONCAT(DISTINCT UA.Email SEPARATOR ', ') AS Emails,
+                COALESCE(AB.TotalAmountDue, 0) AS TotalAmountDue
+            FROM Apartments A
+            INNER JOIN UserAccounts UA ON A.ApartmentNumber = UA.ApartmentNumber
+            LEFT JOIN ApartmentBalances AB ON A.ApartmentNumber = AB.ApartmentNumber
+            WHERE UA.ApartmentNumber IS NOT NULL AND UA.ApartmentNumber != ''
+            GROUP BY A.ApartmentNumber
+            ORDER BY A.ApartmentNumber;
+        `;
+
+        db.query(getApartmentsQuery, (err, apartmentsResults) => {
+            if (err) {
+                console.error('Failed to retrieve apartments:', err);
+                return res.status(500).json({ success: false, message: 'Failed to retrieve apartments.', error: err });
+            }
+
+            if (apartmentsResults.length > 0) {
+                return res.json({ success: true, apartments: apartmentsResults });
+            } else {
+                return res.json({ success: false, message: 'No apartments found.' });
+            }
         });
     });
     

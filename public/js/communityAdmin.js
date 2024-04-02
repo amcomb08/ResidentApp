@@ -424,3 +424,47 @@ async function deleteAnnouncement(AnnouncementID) {
       alert('An error occurred while processing your request.');
     }
 }
+
+async function getApartments() {
+  try {
+      let response = await fetch('http://localhost:5000/communityAdmin/getApartments', {
+          method: 'GET',
+          credentials: 'include'
+      });
+
+      let data = await response.json();
+
+      if (data.success) {
+          populateApartments(data.apartments);
+      } else {
+          console.error('Failed to fetch events:', data.message);
+      }
+  } catch (error) {
+      console.error('Error fetching events:', error);
+  }
+}
+
+function populateApartments(apartments) {
+  const apartmentsContainer = document.getElementById('apartmentsContainer');
+  apartmentsContainer.innerHTML = '';
+
+  apartments.forEach(apartment => {
+    const apartmentElement = document.createElement('div');
+    apartmentElement.className = "block p-4 mb-4 bg-gray-600 rounded-xl hover:bg-gray-700 transition duration-200";
+
+    apartmentElement.innerHTML = `
+      <h4 class="text-white font-semibold leading-6 mb-1">Apartment: ${apartment.ApartmentNumber}</h4>
+      <div class="flex items-center mb-4">
+          <span class="h-2 w-2 mr-1 bg-green-400 rounded-full"></span>
+          <span class="text-xs font-medium text-green-400">Residents: ${apartment.Names}</span>
+      </div>
+      <div class="flex items-center mb-4">
+          <span class="h-2 w-2 mr-1 bg-blue-400 rounded-full"></span>
+          <span class="text-xs font-medium text-blue-400">Emails: ${apartment.Emails}</span>
+      </div>
+      <p class="text-xs text-gray-300 leading-normal mb-10">Total Amount Due: $${apartment.TotalAmountDue}</p>
+    `;
+
+    apartmentsContainer.appendChild(apartmentElement);
+  });
+}

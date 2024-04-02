@@ -22,6 +22,11 @@ function showDropdown(type) {
     dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
 }
 
+function formatDate(dateString) {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  }
+
 function checkLogin(role){
     window.onload = function() {
         fetch('http://localhost:5000/login/checkLogin', { credentials: 'include' })
@@ -95,6 +100,7 @@ function createAdminHeader() {
             dropdown: [
                 { text: 'Add User', href: 'adduser.html' },
                 { text: 'Remove User', href: 'removeuser.html' },
+                { text: 'Manage apartments', href: 'apartments.html'},
             ]
         }
     ];
@@ -193,6 +199,10 @@ function createHeader() {
             text: 'All Options',
             dropdown: [
                 { text: 'Change Password', href: 'changepassword.html?type=loggedIn' },
+                { text: 'Maintenance Request', href: 'maintenance.html' },
+                { text: 'Contact Us', href: 'contactus.html' },
+                { text: 'Reserve Amenity', href: 'amenities.html' },
+                { text: 'View Reservations', href: 'reservations.html'},
             ]
         }
     ];
@@ -292,4 +302,29 @@ function initalizeNavBar(){
     });
 }
 
+async function cancelReservation(ScheduleID, ReservationID) {
 
+    try {
+      // You need to await the fetch call to complete
+      let response = await fetch('http://localhost:5000/communityAdmin/cancelReservation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ScheduleID: ScheduleID, ReservationID: ReservationID }),
+        credentials: 'include'
+      });
+
+      // Also await the response.json() call to resolve
+      let data = await response.json();
+
+      if (data.success) {
+        // Handle the success scenario, such as redirecting to a confirmation page
+        window.location = './index.html';
+      } else {
+        // Handle the failure scenario
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred while processing your request.');
+    }
+}
