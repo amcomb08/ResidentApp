@@ -1,10 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const db = require('./db');
-const bcrypt = require('bcryptjs');
-const nodemailer = require('nodemailer');
-const bodyParser = require('body-parser');
-const crypto = require('crypto');
 
 router.post('/submitEvent', (req, res) => {
     // Check if the user is logged in and has a session

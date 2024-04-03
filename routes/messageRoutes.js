@@ -26,7 +26,7 @@ router.post('/send-maintenance-request', (req, res) => {
 
     // Define mail options
     const mailOptions = {
-        from: 'CSE696ResidentApp@gmail.com',
+        from: process.env.EMAIL_USER,
         to: maintenanceEmail,
         subject: maintenanceType,
         text: messageText
@@ -120,7 +120,7 @@ router.post('/send-maintenance-request', (req, res) => {
 router.post('/send-contact-message', (req, res) => {
     const { firstName, lastName, email, phone, message } = req.body;
     const apartment = req.session.apartmentNumber;
-    const maintenanceEmail = 'amcombs2000@gmail.com'; // Change this to the email of the contact person
+    const maintenanceEmail = process.env.EMAIL_USER; // Change this to the email of the contact person
     const senderID = req.session.userId;
     const receiverID = 1; // Change this to the account ID of the contact person
     const messageText = `${firstName} ${lastName} from apartment ${apartment} has requested to contact you. The details are as follows: ${message}. You can contact them at ${email} or ${phone}`
@@ -264,7 +264,7 @@ router.post('/send-late-notice', (req, res) => {
                 // Send an email to each user's email address
                 results.forEach(user => {
                     const mailOptions = {
-                        from: 'CSE696ResidentApp@gmail.com',
+                        from: process.env.EMAIL_USER,
                         to: user.Email, // Recipient email address
                         subject: 'Late Payment Notice',
                         text: lateNoticeText

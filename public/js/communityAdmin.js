@@ -648,7 +648,7 @@ function populateLatePayments(latePayments) {
       sendLateNotice(latePayment.ApartmentNumber);
     });
 
-    latePaymentsElement.appendChild(endLeaseButton);
+    latePaymentsElement.appendChild(lateNoticeButton);
 
     latePaymentsContainer.appendChild(latePaymentsElement);
   });
