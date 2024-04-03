@@ -45,25 +45,32 @@ function formatDate(dateString) {
     return new Date(dateString).toLocaleDateString(undefined, options);
   }
 
-async function checkLogin(role){
+async function checkLogin(role) {
+    // Ensure the configuration is loaded before setting up onload
     const config = await fetchConfig();
-    window.onload = function() {
-        fetch(`${config.CONNECTION_STRING}/login/checkLogin`, { credentials: 'include' })
-        .then(response => response.json())
-        .then(data => {
-            if (!data.loggedin || (data.userRole !== role && data.userRole !== 'DevTest' && data.userRole !== 'AnyUser')) {
-                window.location.href = 'login.html';
-            }
-            else{
-                document.body.style.display = 'block';
-            }
-            // If user is logged in, no action is needed. They can continue using the page.
-        })
-        .catch(error => {
-           console.error('There was an error checking the login status:', error);
-        });
+  
+    async function onLoad() {
+      try {
+        const response = await fetch(`${config.CONNECTION_STRING}/login/checkLogin`, { credentials: 'include' });
+        const data = await response.json();
+        if (!data.loggedin || (data.userRole !== role && data.userRole !== 'DevTest' && data.userRole !== 'AnyUser')) {
+          window.location.href = 'login.html';
+        } else {
+          document.body.style.display = 'block';
+        }
+      } catch (error) {
+        console.error('There was an error checking the login status:', error);
+      }
+    }
+  
+    // Check if the load event has already fired
+    if (document.readyState === 'complete') {
+      onLoad();
+    } else {
+      window.onload = onLoad;
     }
 }
+  
 
 function initalizeAdminNavBar(){
     // Create the header and append it to the body
