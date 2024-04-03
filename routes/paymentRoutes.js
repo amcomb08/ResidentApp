@@ -60,9 +60,9 @@ router.post('/makePayment', (req, res) => {
                 }
 
                 const apartmentNumber = userResults[0].ApartmentNumber;
-                const getPaymentDueQuery = 'SELECT TotalAmountDue FROM ApartmentBalances WHERE ApartmentNumber = ?';
-                connection.query(getPaymentDueQuery, [apartmentNumber], (err, userBalanceResults) => {
-                    if (err || userBalanceResults.length === 0) {
+                const getBalanceQuery = 'SELECT TotalAmountDue FROM ApartmentBalances WHERE ApartmentNumber = ?';
+                connection.query(getBalanceQuery, [apartmentNumber], (err, balanceResults) => {
+                    if (err || balanceResults.length === 0) {
                         connection.rollback(() => {
                             connection.release();
                             res.json({ success: false, message: 'Failed to find user balance.' });
@@ -70,51 +70,78 @@ router.post('/makePayment', (req, res) => {
                         return;
                     }
 
-                    const userBalanceNumber = parseFloat(userBalanceResults[0].TotalAmountDue);
-                    const userAmountNumber = parseFloat(paymentAmount);
-                    
-                    //Check if the payment amount is greater than the user's balance
-                    if (userAmountNumber > userBalanceNumber) {
+                    const totalAmountDue = parseFloat(balanceResults[0].TotalAmountDue);
+                    const newPaymentAmount = parseFloat(paymentAmount);
+
+                    if (newPaymentAmount > totalAmountDue) {
                         connection.rollback(() => {
                             connection.release();
-                            res.json({ success: false, message: 'Payment Amount exceeds current due balance' });
+                            res.json({ success: false, message: 'Payment amount exceeds current due balance.' });
                         });
                         return;
                     }
 
-                    // Update the PaymentsDue table
-                    const updatePaymentQuery = `
-                        UPDATE ApartmentBalances
-                        SET TotalAmountDue = TotalAmountDue - ?
-                        WHERE ApartmentNumber = ?
-                    `;
-                    connection.query(updatePaymentQuery, [paymentAmount, apartmentNumber], (err, updateResults) => {
+                    // Update the balance
+                    const updateBalanceQuery = 'UPDATE ApartmentBalances SET TotalAmountDue = TotalAmountDue - ? WHERE ApartmentNumber = ?';
+                    connection.query(updateBalanceQuery, [newPaymentAmount, apartmentNumber], (err, updateResults) => {
                         if (err) {
-                            console.error('Error during payment update:', err);
                             connection.rollback(() => {
                                 connection.release();
-                                res.json({ success: false, message: 'Failed to update payment amount.' });
+                                res.json({ success: false, message: 'Failed to update balance.' });
                             });
                             return;
                         }
-                        // Commit the transaction
-                        connection.commit(err => {
-                            if (err) {
-                                connection.rollback(() => {
+
+                        // Check if the balance is now zero
+                        if (totalAmountDue - newPaymentAmount == 0) {
+                            const setPaymentsOffQuery = 'UPDATE PaymentsDue SET IsPaidOff = TRUE WHERE ApartmentNumber = ? AND IsPaidOff = FALSE';
+                            connection.query(setPaymentsOffQuery, [apartmentNumber], (err, paymentsOffResults) => {
+                                if (err) {
+                                    connection.rollback(() => {
+                                        connection.release();
+                                        res.json({ success: false, message: 'Failed to update due payments.' });
+                                    });
+                                    return;
+                                }
+
+                                // If everything is fine, commit the transaction
+                                connection.commit(err => {
+                                    if (err) {
+                                        connection.rollback(() => {
+                                            connection.release();
+                                            res.json({ success: false, message: 'Failed to commit transaction.' });
+                                        });
+                                        return;
+                                    }
+
                                     connection.release();
-                                    res.json({ success: false, message: 'Error committing transaction.' });
+                                    res.json({ success: true, message: 'Payment made and balance updated successfully.' });
                                 });
-                                return;
-                            }
-                            connection.release();
-                            res.json({ success: true, message: 'Payment made successfully.' });
-                        });
+                            });
+                        } else {
+                            // If balance is not zero, just commit the transaction
+                            connection.commit(err => {
+                                if (err) {
+                                    connection.rollback(() => {
+                                        connection.release();
+                                        res.json({ success: false, message: 'Failed to commit transaction.' });
+                                    });
+                                    return;
+                                }
+
+                                connection.release();
+                                res.json({ success: true, message: 'Payment made successfully, balance not zero.' });
+                            });
+                        }
                     });
                 });
             });
         });
     });
 });
+
+
+
 
 router.get('/getPaymentMethods', (req, res) => {
     const userID = req.session.userId;

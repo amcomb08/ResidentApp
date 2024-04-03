@@ -52,6 +52,7 @@ CREATE TABLE PaymentsDue (
     PaymentAmount DECIMAL(10, 2) NOT NULL,
     IsMonthly Bit DEFAULT 0,
     Comment TEXT NOT NULL,
+    IsPaidOff BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (ApartmentNumber) REFERENCES Apartments(ApartmentNumber)
 );
 -- Payment Methods Table

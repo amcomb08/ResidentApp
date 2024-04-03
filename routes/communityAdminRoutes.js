@@ -459,6 +459,39 @@ router.get('/getAmenities', (req, res) => {
             }
         });
     });
+
+    router.get('/getLatePayments', (req, res) => {
+            if (!req.session || !req.session.userId) {
+                return res.status(401).json({ success: false, message: 'User not logged in' });
+            }
+
+            // SQL query to fetch all apartments with the names and the current total amount due
+            // where an ApartmentNumber is assigned. If there is no balance, it defaults to 0.
+            const getLatePaymentsQuery = `
+            SELECT 
+            PD.ApartmentNumber,
+            MIN(PD.DueDate) AS OldestDueDate,
+            AB.TotalAmountDue
+            FROM PaymentsDue PD
+            INNER JOIN ApartmentBalances AB ON PD.ApartmentNumber = AB.ApartmentNumber
+            WHERE PD.IsPaidOff = 0 AND PD.DueDate < CURDATE()
+            GROUP BY PD.ApartmentNumber, AB.TotalAmountDue
+            ORDER BY OldestDueDate ASC;
+        `;
+        
+        db.query(getLatePaymentsQuery, (err, latePaymentsResults) => {
+            if (err) {
+                console.error('Failed to retrieve late payments:', err);
+                return res.status(500).json({ success: false, message: 'Failed to retrieve late payments.', error: err });
+            }
+        
+            if (latePaymentsResults.length > 0) {
+                return res.json({ success: true, latePayments: latePaymentsResults });
+            } else {
+                return res.json({ success: false, message: 'No late payments found.' });
+            }
+        });
+    });
     
     
 
