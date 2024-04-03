@@ -10,7 +10,8 @@ async function submitCreateEvent() {
     // validate the data
     if (isValidData(dataToInsert)) {
       try {
-        let response = await fetch('https://residentapplication.azurewebsites.net/communityAdmin/submitEvent', {
+        const config = await fetchConfig();
+        let response = await fetch(`${config.CONNECTION_STRING}/communityAdmin/submitEvent`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(dataToInsert),
@@ -37,8 +38,9 @@ async function submitCreateEvent() {
   }
   
   async function getEvents() {
+    const config = await fetchConfig();
     try {
-        let response = await fetch('https://residentapplication.azurewebsites.net/message/get-events', {
+        let response = await fetch(`${config.CONNECTION_STRING}/message/get-events`, {
             method: 'GET',
             credentials: 'include'
         });
@@ -91,10 +93,10 @@ async function submitCreateEvent() {
   }
   
   async function deleteEvent(EventID) {
-  
+    const config = await fetchConfig();
       try {
         // You need to await the fetch call to complete
-        let response = await fetch('https://residentapplication.azurewebsites.net/communityAdmin/deleteEvent', {
+        let response = await fetch(`${config.CONNECTION_STRING}/communityAdmin/deleteEvent`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ EventID: EventID }),
@@ -126,8 +128,9 @@ async function submitCreateEvent() {
   
     // validate the data
     if (isValidData(dataToInsert)) {
+      const config = await fetchConfig();
       try {
-        let response = await fetch('https://residentapplication.azurewebsites.net/communityAdmin/submitAnnouncement', {
+        let response = await fetch(`${config.CONNECTION_STRING}/communityAdmin/submitAnnouncement`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(dataToInsert),
@@ -155,8 +158,9 @@ async function submitCreateEvent() {
 
 
   async function getAnnoucements() {
+    const config = await fetchConfig();
     try {
-        let response = await fetch('https://residentapplication.azurewebsites.net/message/get-announcements', {
+        let response = await fetch(`${config.CONNECTION_STRING}/message/get-announcements`, {
             method: 'GET',
             credentials: 'include' // If your endpoint requires authentication
         });
@@ -202,10 +206,10 @@ function populateAnnouncement(announcements) {
 
 
 async function deleteAnnouncement(AnnouncementID) {
-  
+  const config = await fetchConfig();
     try {
       // You need to await the fetch call to complete
-      let response = await fetch('https://residentapplication.azurewebsites.net/communityAdmin/deleteAnnouncement', {
+      let response = await fetch(`${config.CONNECTION_STRING}/communityAdmin/deleteAnnouncement`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ AnnouncementID: AnnouncementID }),
@@ -228,10 +232,10 @@ async function deleteAnnouncement(AnnouncementID) {
     }
 }
 
-  function fillAmenityDropdown() {
-    
+  async function fillAmenityDropdown() {
+    const config = await fetchConfig();
     // Fetch the payment method nicknames from the server
-    fetch('https://residentapplication.azurewebsites.net/communityAdmin/getAmenities', {
+    fetch(`${config.CONNECTION_STRING}/communityAdmin/getAmenities`, {
       credentials: 'include' 
     })
     .then(response => response.json())
@@ -282,7 +286,8 @@ async function deleteAnnouncement(AnnouncementID) {
     // validate the data
     if (isValidData(dataToInsert)) {
       try {
-        let response = await fetch('https://residentapplication.azurewebsites.net/communityAdmin/submitAmenityHours', {
+        const config = await fetchConfig();
+        let response = await fetch(`${config.CONNECTION_STRING}/communityAdmin/submitAmenityHours`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(dataToInsert),
@@ -317,8 +322,9 @@ async function deleteAnnouncement(AnnouncementID) {
   
     // validate the data
     if (isValidData(dataToInsert)) {
+      const config = await fetchConfig();
       try {
-        let response = await fetch('https://residentapplication.azurewebsites.net/communityAdmin/submitAmenity', {
+        let response = await fetch(`${config.CONNECTION_STRING}/communityAdmin/submitAmenity`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(dataToInsert),
@@ -345,8 +351,9 @@ async function deleteAnnouncement(AnnouncementID) {
   }
 
   async function getReservations() {
+    const config = await fetchConfig();
     try {
-        let response = await fetch('https://residentapplication.azurewebsites.net/communityAdmin/getReservations', {
+        let response = await fetch(`${config.CONNECTION_STRING}/communityAdmin/getReservations`, {
             method: 'GET',
             credentials: 'include'
         });
@@ -399,10 +406,10 @@ async function deleteAnnouncement(AnnouncementID) {
   }
 
   async function cancelReservation(ScheduleID, ReservationID) {
-  
+    const config = await fetchConfig();
     try {
       // You need to await the fetch call to complete
-      let response = await fetch('https://residentapplication.azurewebsites.net/communityAdmin/cancelReservation', {
+      let response = await fetch(`${config.CONNECTION_STRING}/communityAdmin/cancelReservation`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ScheduleID: ScheduleID, ReservationID: ReservationID }),
@@ -426,8 +433,9 @@ async function deleteAnnouncement(AnnouncementID) {
 }
 
 async function getApartments() {
+  const config = await fetchConfig();
   try {
-      let response = await fetch('https://residentapplication.azurewebsites.net/communityAdmin/getApartments', {
+      let response = await fetch(`${config.CONNECTION_STRING}/communityAdmin/getApartments`, {
           method: 'GET',
           credentials: 'include'
       });
@@ -541,9 +549,10 @@ function createLeaseRenewalFields(apartmentElement, apartmentNumber) {
 
 
 async function updateLease(apartmentNumber, newLeaseDate, rentAmount) {
+  const config = await fetchConfig();
   try {
     // You need to await the fetch call to complete
-    let response = await fetch('https://residentapplication.azurewebsites.net/communityAdmin/updateLease', {
+    let response = await fetch(`${config.CONNECTION_STRING}/communityAdmin/updateLease`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ApartmentNumber: apartmentNumber, NewLeaseDate: newLeaseDate, RentAmount: rentAmount }),
@@ -567,9 +576,10 @@ async function updateLease(apartmentNumber, newLeaseDate, rentAmount) {
 }
 
 async function endLease(apartmentNumber) {
+  const config = await fetchConfig();
   try {
     // You need to await the fetch call to complete
-    let response = await fetch('https://residentapplication.azurewebsites.net/communityAdmin/endLease', {
+    let response = await fetch(`${config.CONNECTION_STRING}/communityAdmin/endLease`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ApartmentNumber: apartmentNumber}),
@@ -593,8 +603,9 @@ async function endLease(apartmentNumber) {
 }
 
 async function getLatePayments() {
+  const config = await fetchConfig();
   try {
-      let response = await fetch('https://residentapplication.azurewebsites.net/communityAdmin/getLatePayments', {
+      let response = await fetch(`${config.CONNECTION_STRING}/communityAdmin/getLatePayments`, {
           method: 'GET',
           credentials: 'include'
       });
