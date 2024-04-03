@@ -5,13 +5,14 @@ const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
 const crypto = require('crypto');
+require('dotenv').config();
 
 // Nodemailer setup (NEED TO ADD TO SECRETS)
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-       user: 'CSE696ResidentApp@gmail.com', 
-       pass: 'htro tqlp kqtr kzvf' 
+        user: process.env.EMAIL_USER, 
+        pass: process.env.EMAIL_PASS
     }
 }); 
 
@@ -291,7 +292,7 @@ router.post('/send-late-notice', (req, res) => {
                     `;
 
                     connection.query(insertQuery, [
-                        5,
+                        1,
                         user.UserID,
                         "Late Payment Notice",
                         lateNoticeText,
