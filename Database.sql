@@ -2,7 +2,10 @@
 CREATE TABLE Apartments (
     ApartmentNumber INT AUTO_INCREMENT PRIMARY KEY,
     Building VARCHAR(255) NOT NULL,
-    NumberOfRooms INT NOT NULL
+    NumberOfRooms INT NOT NULL,
+    IsOccupied BOOLEAN NOT NULL DEFAULT FALSE,
+    LeaseEndDate DATE,
+    Rent DECIMAL(10, 2) NOT NULL
 );
 
 --User Accounts
@@ -49,6 +52,7 @@ CREATE TABLE PaymentsDue (
     PaymentAmount DECIMAL(10, 2) NOT NULL,
     IsMonthly Bit DEFAULT 0,
     Comment TEXT NOT NULL,
+    IsPaidOff BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (ApartmentNumber) REFERENCES Apartments(ApartmentNumber)
 );
 -- Payment Methods Table

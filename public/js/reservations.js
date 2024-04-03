@@ -10,9 +10,10 @@ function isValidData(data) {
 }
 
 
-function loadAmenities() {
+async function loadAmenities() {
+    const config = await fetchConfig();
     // Fetch the amenities from the server
-    fetch('https://residentapplication.azurewebsites.net/reservation/getAmenities', {
+    fetch(`${config.CONNECTION_STRING}/reservation/getAmenities`, {
       credentials: 'include'
     })
     .then(response => response.json())
@@ -41,8 +42,9 @@ function loadAmenities() {
     .catch(error => console.error('Error:', error));
   }
 
-  function fetchAmenitySchedule(amenityId) {
-    fetch(`https://residentapplication.azurewebsites.net/reservation/getAmenitySchedule/${amenityId}`, {
+  async function fetchAmenitySchedule(amenityId) {
+    const config = await fetchConfig();
+    fetch(`${config.CONNECTION_STRING}/reservation/getAmenitySchedule/${amenityId}`, {
         credentials: 'include'
     })
     .then(response => response.json())
@@ -141,8 +143,9 @@ async function reserveSlot() { //Executes once save is clicked on the addpayment
   // validate the data
   if (isValidData(dataToInsert)) {
     try {
+      const config = await fetchConfig();
       // You need to await the fetch call to complete
-      let response = await fetch('https://residentapplication.azurewebsites.net/reservation/makeReservation', {
+      let response = await fetch(`${config.CONNECTION_STRING}/reservation/makeReservation`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToInsert),
@@ -169,8 +172,9 @@ async function reserveSlot() { //Executes once save is clicked on the addpayment
 }
 
 async function getReservations() {
+  const config = await fetchConfig();
   try {
-      let response = await fetch('https://residentapplication.azurewebsites.net/reservation/getReservations', {
+      let response = await fetch(`${config.CONNECTION_STRING}/reservation/getReservations`, {
           method: 'GET',
           credentials: 'include'
       });

@@ -39,8 +39,9 @@ async function modifyUserClicked(action) {
     // validate the data
     if (isValidData(dataToInsert)) {
       try {
+        const config = await fetchConfig();
         // You need to await the fetch call to complete
-        let response = await fetch('https://residentapplication.azurewebsites.net/adminRoutes/' + endpoint, {
+        let response = await fetch(`${config.CONNECTION_STRING}/adminRoutes/` + endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(dataToInsert),
@@ -80,8 +81,9 @@ function togglePaymentType(action) {
 
 async function submitMonthly(){
   try {
+    const config = await fetchConfig();
     // You need to await the fetch call to complete
-    let response = await fetch('https://residentapplication.azurewebsites.net/adminRoutes/submitMonthly', {
+    let response = await fetch(`${config.CONNECTION_STRING}/adminRoutes/submitMonthly`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include'
@@ -115,7 +117,8 @@ async function submitCustom() {
     // validate the data
     if (isValidData(dataToInsert)) {
       try {
-        let response = await fetch('https://residentapplication.azurewebsites.net/adminRoutes/submitCustom', {
+        const config = await fetchConfig();
+        let response = await fetch(`${config.CONNECTION_STRING}/adminRoutes/submitCustom`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(dataToInsert),

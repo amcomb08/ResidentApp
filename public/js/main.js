@@ -1,13 +1,31 @@
+async function fetchConfig() {
+    try {
+      // Fetch the configuration from the server
+      const response = await fetch('/config');
+      if (!response.ok) throw new Error('Failed to load configuration');
+      
+      // Parse the JSON response
+      const config = await response.json();
+      
+      return config;
+    } catch (error) {
+      console.error('Error fetching configuration:', error);
+      return null;
+    }
+}
+
 // Define the logout function
-function logoutUser() {
-    fetch('https://residentapplication.azurewebsites.net/logout', { credentials: 'include', method: 'POST' })
+async function logoutUser() {
+    const config = await fetchConfig();
+
+    fetch(`${config.CONNECTION_STRING}/logout`, { credentials: 'include', method: 'POST' })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
             // Redirect to login page on successful logout
             window.location.href = '../login.html';
         } else {
-            // Handle any errors or unsuccessful logout attempts
+            // Handle any errors or uCnsuccessful logout attempts
             console.error('Logout failed:', data.message);
         }
     })
@@ -27,24 +45,32 @@ function formatDate(dateString) {
     return new Date(dateString).toLocaleDateString(undefined, options);
   }
 
-function checkLogin(role){
-    window.onload = function() {
-        fetch('https://residentapplication.azurewebsites.net/login/checkLogin', { credentials: 'include' })
-        .then(response => response.json())
-        .then(data => {
-            if (!data.loggedin || (data.userRole !== role && data.userRole !== 'DevTest' && data.userRole !== 'AnyUser')) {
-                window.location.href = 'login.html';
-            }
-            else{
-                document.body.style.display = 'block';
-            }
-            // If user is logged in, no action is needed. They can continue using the page.
-        })
-        .catch(error => {
-           console.error('There was an error checking the login status:', error);
-        });
+async function checkLogin(role) {
+    // Ensure the configuration is loaded before setting up onload
+    const config = await fetchConfig();
+  
+    async function onLoad() {
+      try {
+        const response = await fetch(`${config.CONNECTION_STRING}/login/checkLogin`, { credentials: 'include' });
+        const data = await response.json();
+        if (!data.loggedin || (data.userRole !== role && data.userRole !== 'DevTest' && data.userRole !== 'AnyUser')) {
+          window.location.href = 'login.html';
+        } else {
+          document.body.style.display = 'block';
+        }
+      } catch (error) {
+        console.error('There was an error checking the login status:', error);
+      }
+    }
+  
+    // Check if the load event has already fired
+    if (document.readyState === 'complete') {
+      onLoad();
+    } else {
+      window.onload = onLoad;
     }
 }
+  
 
 function initalizeAdminNavBar(){
     // Create the header and append it to the body
@@ -101,6 +127,7 @@ function createAdminHeader() {
                 { text: 'Add User', href: 'adduser.html' },
                 { text: 'Remove User', href: 'removeuser.html' },
                 { text: 'Manage apartments', href: 'apartments.html'},
+                { text: 'Late Payments', href: 'latepayments.html'},
             ]
         }
     ];
@@ -303,10 +330,10 @@ function initalizeNavBar(){
 }
 
 async function cancelReservation(ScheduleID, ReservationID) {
-  
+    const config = await fetchConfig();
     try {
       // You need to await the fetch call to complete
-      let response = await fetch('https://residentapplication.azurewebsites.net/communityAdmin/cancelReservation', {
+      let response = await fetch(`${config.CONNECTION_STRING}/communityAdmin/cancelReservation`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ScheduleID: ScheduleID, ReservationID: ReservationID }),
