@@ -592,4 +592,66 @@ async function endLease(apartmentNumber) {
   }
 }
 
+async function getLatePayments() {
+  try {
+      let response = await fetch('https://residentapplication.azurewebsites.net/communityAdmin/getLatePayments', {
+          method: 'GET',
+          credentials: 'include'
+      });
+
+      let data = await response.json();
+
+      if (data.success) {
+          populateLatePayments(data.latePayments);
+      } else {
+          console.error('Failed to fetch events:', data.message);
+      }
+  } catch (error) {
+      console.error('Error fetching events:', error);
+  }
+}
+
+
+function populateLatePayments(latePayments) {
+  const latePaymentsContainer = document.getElementById('latePaymentsContainer');
+  latePaymentsContainer.innerHTML = '';
+
+  latePayments.forEach(latePayment => {
+    const latePaymentsElement = document.createElement('div');
+    latePaymentsElement.className = "block p-4 mb-4 bg-gray-600 rounded-xl hover:bg-gray-700 transition duration-200";
+
+    // Format the LeaseEndDate using formatDate function
+    const formattedLatePaymentsDate = latePayment.OldestDueDate ? formatDate(latePayment.OldestDueDate) : 'Not Available';
+
+    latePaymentsElement.innerHTML = `
+      <h4 class="text-white font-semibold leading-6 mb-1">Apartment: ${latePayment.ApartmentNumber}</h4>
+      <div class="flex items-center mb-4">
+          <span class="h-2 w-2 mr-1 bg-green-400 rounded-full"></span>
+          <span class="text-xs font-medium text-green-400">Residents: </span>
+      </div>
+      <div class="flex items-center mb-4">
+          <span class="h-2 w-2 mr-1 bg-blue-400 rounded-full"></span>
+          <span class="text-xs font-medium text-blue-400">Emails: </span>
+      </div>
+      <div class="flex items-center mb-4">
+          <span class="h-2 w-2 mr-1 bg-yellow-400 rounded-full"></span>
+          <span class="text-xs font-medium text-yellow-400">Due Date: ${formattedLatePaymentsDate}</span>
+      </div>
+      <p class="text-xs text-gray-300 leading-normal mb-10">Total Amount Due: $${latePayment.TotalAmountDue}</p>
+    `;
+
+    // Create the "End Lease" button
+    const endLeaseButton = document.createElement('button');
+    endLeaseButton.textContent = 'Send Notice';
+    endLeaseButton.className = "bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-4";
+    endLeaseButton.addEventListener('click', () => {
+      console.log('Lease ended for apartment:', apartment.ApartmentNumber);
+    });
+
+    latePaymentsElement.appendChild(endLeaseButton);
+
+    latePaymentsContainer.appendChild(latePaymentsElement);
+  });
+}
+
 
