@@ -641,11 +641,11 @@ function populateLatePayments(latePayments) {
     `;
 
     // Create the "End Lease" button
-    const endLeaseButton = document.createElement('button');
-    endLeaseButton.textContent = 'Send Notice';
-    endLeaseButton.className = "bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-4";
-    endLeaseButton.addEventListener('click', () => {
-      console.log('Lease ended for apartment:', apartment.ApartmentNumber);
+    const lateNoticeButton = document.createElement('button');
+    lateNoticeButton.textContent = 'Send Notice';
+    lateNoticeButton.className = "bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-4";
+    lateNoticeButton.addEventListener('click', () => {
+      sendLateNotice(latePayment.ApartmentNumber);
     });
 
     latePaymentsElement.appendChild(endLeaseButton);
