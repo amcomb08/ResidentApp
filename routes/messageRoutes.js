@@ -137,6 +137,117 @@ router.post('/send-contact-message', (req, res) => {
         });
 });
 
+router.post('/send-late-notice', (req, res) => {
+    const { apartmentNumber } = req.body;
+
+    if (!req.session || !req.session.userId) {
+        return res.status(401).json({ success: false, message: 'User is not logged in.' });
+    }
+
+    // Get a connection from the pool
+    db.getConnection((err, connection) => {
+        if (err) {
+            return res.json({ success: false, message: 'Error getting database connection.' });
+        }
+
+        // Start a new transaction
+        connection.beginTransaction(err => {
+            if (err) {
+                connection.release();
+                return res.json({ success: false, message: 'Error starting transaction.' });
+            }
+
+            // Query to get all user accounts for the apartment number
+            const getUserEmailsQuery = 'SELECT Email, UserID FROM UserAccounts WHERE ApartmentNumber = ?';
+            connection.query(getUserEmailsQuery, [apartmentNumber], (err, results) => {
+                if (err) {
+                    connection.rollback(() => {
+                        connection.release();
+                        return res.json({ success: false, message: 'Failed to retrieve user emails.' });
+                    });
+                    return;
+                }
+
+                // Check if there are any user emails to send notifications to
+                if (results.length === 0) {
+                    connection.rollback(() => {
+                        connection.release();
+                        return res.json({ success: false, message: 'No users found for this apartment.' });
+                    });
+                    return;
+                }
+
+                // Define the late notice text
+                const lateNoticeText = `This is a notice that our records indicate there is a late payment for your apartment. Please address this as soon as possible or contact the front desk if you have any questions.`;
+
+                // Send an email to each user's email address
+                results.forEach(user => {
+                    const mailOptions = {
+                        from: 'CSE696ResidentApp@gmail.com',
+                        to: user.Email, // Recipient email address
+                        subject: 'Late Payment Notice',
+                        text: lateNoticeText
+                    };
+
+                    transporter.sendMail(mailOptions, (error, info) => {
+                        if (error) {
+                            connection.rollback(() => {
+                                connection.release();
+                                return res.json({ success: false, message: 'Failed to send email.' });
+                            });
+                            return;
+                        }
+                    });
+
+                    const insertQuery = `
+                    INSERT INTO Messages (
+                        SenderUserID,
+                        ReceiverID,
+                        Subject,
+                        Message,
+                        TimeStamp,
+                        MessageType
+                    ) VALUES (? , ? , ? , ? , ? , ?);
+                    `;
+    
+                    connection.query(insertQuery, [
+                        5,
+                        user.UserID,
+                        "Late Payment Notice",
+                        lateNoticeText,
+                        new Date(),
+                        "Late Payment"
+                    ], (err, results) => {
+                        if (err) {
+                            console.error('Database update error:', err);
+                            connection.rollback(() => {
+                                connection.release();
+                                return res.json({ success: false, message: 'Database update error.' });
+                            });
+                            return;
+                        }
+                    });
+                });
+
+                // Commit the transaction after sending all emails
+                connection.commit(err => {
+                    if (err) {
+                        connection.rollback(() => {
+                            connection.release();
+                            return res.json({ success: false, message: 'Failed to commit transaction.' });
+                        });
+                        return;
+                    }
+
+                    connection.release();
+                    res.json({ success: true, message: 'Late payment notices sent successfully.' });
+                });
+            });
+        });
+    });
+});
+
+
 router.get('/get-events', (req, res) => {
     // You may or may not need to check for a user session, depending on whether this data should be public
     if (!req.session || !req.session.userId) {

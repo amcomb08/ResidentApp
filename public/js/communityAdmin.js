@@ -550,7 +550,7 @@ function populateLatePayments(latePayments) {
     endLeaseButton.textContent = 'Send Notice';
     endLeaseButton.className = "bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-4";
     endLeaseButton.addEventListener('click', () => {
-      console.log('Lease ended for apartment:', apartment.ApartmentNumber);
+      sendLateNotice(latePayment.ApartmentNumber);
     });
 
     latePaymentsElement.appendChild(endLeaseButton);

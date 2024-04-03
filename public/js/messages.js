@@ -224,3 +224,24 @@ async function loadMessagePreviews(type) {
     messageDetailsContainer.appendChild(messageContent);
   }
 
+  async function sendLateNotice(apartment) {
+    // If all fields are filled, proceed with the fetch request
+    let response = await fetch('http://localhost:5000/message/send-late-notice', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ apartmentNumber: apartment }), // Corrected line
+        credentials: 'include'
+    });
+  
+    let data = await response.json();
+    console.log(data.success);
+  
+    if (data.success) {
+        document.cookie = "authenticated=true; path=/";
+        window.location = './adminindex.html';
+    } else {
+        alert(data.message);
+    }
+  }
+  
+
