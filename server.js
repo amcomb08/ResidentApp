@@ -43,7 +43,7 @@ app.get('/', (req, res) => {
 app.get('/config', (req, res) => {
     const env = process.env.NODE_ENV || 'development';
     const configFile = env === 'production' ? 'config.prod.json' : 'config.dev.json';
-    res.sendFile(configFile, { root: __dirname + (env === 'production' ? '/config' : '/config') });
+    res.sendFile(configFile, { root: __dirname });
 });
   
 // Example of logging incoming requests
