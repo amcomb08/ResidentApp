@@ -10,13 +10,14 @@ const messageRoutes = require('./routes/messageRoutes');
 const reservationRoutes = require('./routes/reservationRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const communityAdminRoutes = require('./routes/communityAdminRoutes');
+require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 5000;
 
 // CORS middleware setup
 app.use(cors({
-    origin: 'residentapplication.azurewebsites.net',
+    origin: process.env.CONNECTION_STRING,
     credentials: true
   }));
 
@@ -25,7 +26,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(session({
-    secret: 'test1234abCDEFG5678hijklmnop', // replace with a strong random secret
+    secret: process.env.SECRET_KEY, // replace with a strong random secret
     resave: false,
     saveUninitialized: true,
     cookie: { secure: 'auto', httpOnly: true } // set secure to true if you are using https

@@ -1,13 +1,15 @@
+require('dotenv').config();
+
 // Define the logout function
 function logoutUser() {
-    fetch('https://residentapplication.azurewebsites.net/logout', { credentials: 'include', method: 'POST' })
+    fetch(process.env.CONNECTION_STRING + '/logout', { credentials: 'include', method: 'POST' })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
             // Redirect to login page on successful logout
             window.location.href = '../login.html';
         } else {
-            // Handle any errors or unsuccessful logout attempts
+            // Handle any errors or uCnsuccessful logout attempts
             console.error('Logout failed:', data.message);
         }
     })
@@ -29,7 +31,7 @@ function formatDate(dateString) {
 
 function checkLogin(role){
     window.onload = function() {
-        fetch('https://residentapplication.azurewebsites.net/login/checkLogin', { credentials: 'include' })
+        fetch(process.env.CONNECTION_STRING + '/login/checkLogin', { credentials: 'include' })
         .then(response => response.json())
         .then(data => {
             if (!data.loggedin || (data.userRole !== role && data.userRole !== 'DevTest' && data.userRole !== 'AnyUser')) {
@@ -307,7 +309,7 @@ async function cancelReservation(ScheduleID, ReservationID) {
   
     try {
       // You need to await the fetch call to complete
-      let response = await fetch('https://residentapplication.azurewebsites.net/communityAdmin/cancelReservation', {
+      let response = await fetch(process.env.CONNECTION_STRING + '/communityAdmin/cancelReservation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ScheduleID: ScheduleID, ReservationID: ReservationID }),
