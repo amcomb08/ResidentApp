@@ -40,6 +40,12 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+app.get('/config', (req, res) => {
+    const env = process.env.NODE_ENV || 'development';
+    const configFile = env === 'production' ? 'config.prod.json' : 'config.dev.json';
+    res.sendFile(configFile, { root: __dirname + (env === 'production' ? '/config' : '/config') });
+});
+  
 // Example of logging incoming requests
 app.use((req, res, next) => {
     console.log(`Received request: ${req.method} ${req.url}`);

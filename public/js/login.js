@@ -1,8 +1,9 @@
 function submitForgotPassword(){
     document.getElementById('forgotPasswordForm').addEventListener('submit', async (e) => {
         e.preventDefault();
+        const config = fetchConfig();
         let email = document.getElementById('userEmail').value;
-        let response = await fetch(process.env.CONNECTION_STRING + ' /login/send-reset-code', {
+        let response = await fetch(`${config.CONNECTION_STRING}/login/send-reset-code`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email }),
@@ -33,7 +34,7 @@ function submitForgotPassword(){
                 let verificationCode = document.getElementById('verificationCode').value;
                 
                 // Send the verification code to the server
-                let verifyResponse = await fetch(process.env.CONNECTION_STRING +  '/login/verify-reset-code', {
+                let verifyResponse = await fetch(`${config.CONNECTION_STRING}/login/verify-reset-code`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, verificationCode }),
@@ -66,10 +67,11 @@ function submitForgotPassword(){
 function loginButton(){
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
+        const config = fetchConfig();
 
         let username = document.getElementById('email').value;
         let password = document.getElementById('password').value;
-        let response = await fetch(process.env.CONNECTION_STRING + '/login/login', {
+        let response = await fetch(`${config.CONNECTION_STRING}/login/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password }),
@@ -93,11 +95,12 @@ function loginButton(){
 function submitChangePassword(){
     document.getElementById('changePassword').addEventListener('submit', async (e) => {
         e.preventDefault();
+        const config = fetchConfig();
         const params = new URLSearchParams(window.location.search);
         const changeType = params.get('type');
         let newPassword = document.getElementById('newPassword').value;
         let confirmNewPassword = document.getElementById('confirmNewPassword').value;
-        let response = await fetch(process.env.CONNECTION_STRING + '/login/changepassword', {
+        let response = await fetch(`${config.CONNECTION_STRING}/login/changepassword`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ newPassword,confirmNewPassword, changeType }),

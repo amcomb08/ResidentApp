@@ -1,8 +1,24 @@
-require('dotenv').config();
+async function fetchConfig() {
+    try {
+      // Fetch the configuration from the server
+      const response = await fetch('/config');
+      if (!response.ok) throw new Error('Failed to load configuration');
+      
+      // Parse the JSON response
+      const config = await response.json();
+      
+      return config;
+    } catch (error) {
+      console.error('Error fetching configuration:', error);
+      return null;
+    }
+}
 
 // Define the logout function
 function logoutUser() {
-    fetch(process.env.CONNECTION_STRING + '/logout', { credentials: 'include', method: 'POST' })
+    const config = fetchConfig();
+
+    fetch(`${config.CONNECTION_STRING}/logout`, { credentials: 'include', method: 'POST' })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
@@ -30,8 +46,9 @@ function formatDate(dateString) {
   }
 
 function checkLogin(role){
+    const config = fetchConfig();
     window.onload = function() {
-        fetch(process.env.CONNECTION_STRING + '/login/checkLogin', { credentials: 'include' })
+        fetch(`${config.CONNECTION_STRING}/login/checkLogin`, { credentials: 'include' })
         .then(response => response.json())
         .then(data => {
             if (!data.loggedin || (data.userRole !== role && data.userRole !== 'DevTest' && data.userRole !== 'AnyUser')) {
@@ -306,10 +323,10 @@ function initalizeNavBar(){
 }
 
 async function cancelReservation(ScheduleID, ReservationID) {
-  
+    const config = fetchConfig();
     try {
       // You need to await the fetch call to complete
-      let response = await fetch(process.env.CONNECTION_STRING + '/communityAdmin/cancelReservation', {
+      let response = await fetch(`${config.CONNECTION_STRING}/communityAdmin/cancelReservation`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ScheduleID: ScheduleID, ReservationID: ReservationID }),
