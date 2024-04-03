@@ -5,15 +5,16 @@ const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
 const crypto = require('crypto');
+require('dotenv').config();
 
 // Nodemailer setup (NEED TO ADD TO SECRETS)
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-       user: 'CSE696ResidentApp@gmail.com', 
-       pass: 'htro tqlp kqtr kzvf' 
+        user: process.env.EMAIL_USER, 
+        pass: process.env.EMAIL_PASS
     }
-});   
+}); 
 
 
 // Login to account
@@ -74,7 +75,7 @@ router.post('/send-reset-code', (req, res) => {
 
         // Define mail options
         const mailOptions = {
-            from: 'CSE696ResidentApp@gmail.com',
+            from: process.env.EMAIL_USER,
             to: email,
             subject: 'Password Reset',
             text: `Your reset token is: ${resetToken}`
