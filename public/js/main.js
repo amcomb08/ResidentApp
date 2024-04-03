@@ -15,8 +15,8 @@ async function fetchConfig() {
 }
 
 // Define the logout function
-function logoutUser() {
-    const config = fetchConfig();
+async function logoutUser() {
+    const config = await fetchConfig();
 
     fetch(`${config.CONNECTION_STRING}/logout`, { credentials: 'include', method: 'POST' })
     .then(response => response.json())
@@ -45,8 +45,8 @@ function formatDate(dateString) {
     return new Date(dateString).toLocaleDateString(undefined, options);
   }
 
-function checkLogin(role){
-    const config = fetchConfig();
+async function checkLogin(role){
+    const config = await fetchConfig();
     window.onload = function() {
         fetch(`${config.CONNECTION_STRING}/login/checkLogin`, { credentials: 'include' })
         .then(response => response.json())
@@ -323,7 +323,7 @@ function initalizeNavBar(){
 }
 
 async function cancelReservation(ScheduleID, ReservationID) {
-    const config = fetchConfig();
+    const config = await fetchConfig();
     try {
       // You need to await the fetch call to complete
       let response = await fetch(`${config.CONNECTION_STRING}/communityAdmin/cancelReservation`, {

@@ -1,7 +1,7 @@
 function submitForgotPassword(){
     document.getElementById('forgotPasswordForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const config = fetchConfig();
+        const config = await fetchConfig();
         let email = document.getElementById('userEmail').value;
         let response = await fetch(`${config.CONNECTION_STRING}/login/send-reset-code`, {
             method: 'POST',
@@ -67,7 +67,7 @@ function submitForgotPassword(){
 function loginButton(){
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const config = fetchConfig();
+        const config = await fetchConfig();
 
         let username = document.getElementById('email').value;
         let password = document.getElementById('password').value;
@@ -95,7 +95,7 @@ function loginButton(){
 function submitChangePassword(){
     document.getElementById('changePassword').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const config = fetchConfig();
+        const config = await fetchConfig();
         const params = new URLSearchParams(window.location.search);
         const changeType = params.get('type');
         let newPassword = document.getElementById('newPassword').value;
