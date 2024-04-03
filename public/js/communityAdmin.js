@@ -10,7 +10,8 @@ async function submitCreateEvent() {
     // validate the data
     if (isValidData(dataToInsert)) {
       try {
-        let response = await fetch('https://residentapplication.azurewebsites.net/communityAdmin/submitEvent', {
+        const config = await fetchConfig();
+        let response = await fetch(`${config.CONNECTION_STRING}/communityAdmin/submitEvent`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(dataToInsert),
@@ -37,8 +38,9 @@ async function submitCreateEvent() {
   }
   
   async function getEvents() {
+    const config = await fetchConfig();
     try {
-        let response = await fetch('https://residentapplication.azurewebsites.net/message/get-events', {
+        let response = await fetch(`${config.CONNECTION_STRING}/message/get-events`, {
             method: 'GET',
             credentials: 'include'
         });
@@ -91,10 +93,10 @@ async function submitCreateEvent() {
   }
   
   async function deleteEvent(EventID) {
-  
+    const config = await fetchConfig();
       try {
         // You need to await the fetch call to complete
-        let response = await fetch('https://residentapplication.azurewebsites.net/communityAdmin/deleteEvent', {
+        let response = await fetch(`${config.CONNECTION_STRING}/communityAdmin/deleteEvent`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ EventID: EventID }),
@@ -126,8 +128,9 @@ async function submitCreateEvent() {
   
     // validate the data
     if (isValidData(dataToInsert)) {
+      const config = await fetchConfig();
       try {
-        let response = await fetch('https://residentapplication.azurewebsites.net/communityAdmin/submitAnnouncement', {
+        let response = await fetch(`${config.CONNECTION_STRING}/communityAdmin/submitAnnouncement`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(dataToInsert),
@@ -155,8 +158,9 @@ async function submitCreateEvent() {
 
 
   async function getAnnoucements() {
+    const config = await fetchConfig();
     try {
-        let response = await fetch('https://residentapplication.azurewebsites.net/message/get-announcements', {
+        let response = await fetch(`${config.CONNECTION_STRING}/message/get-announcements`, {
             method: 'GET',
             credentials: 'include' // If your endpoint requires authentication
         });
@@ -202,10 +206,10 @@ function populateAnnouncement(announcements) {
 
 
 async function deleteAnnouncement(AnnouncementID) {
-  
+  const config = await fetchConfig();
     try {
       // You need to await the fetch call to complete
-      let response = await fetch('https://residentapplication.azurewebsites.net/communityAdmin/deleteAnnouncement', {
+      let response = await fetch(`${config.CONNECTION_STRING}/communityAdmin/deleteAnnouncement`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ AnnouncementID: AnnouncementID }),
@@ -228,10 +232,10 @@ async function deleteAnnouncement(AnnouncementID) {
     }
 }
 
-  function fillAmenityDropdown() {
-    
+  async function fillAmenityDropdown() {
+    const config = await fetchConfig();
     // Fetch the payment method nicknames from the server
-    fetch('https://residentapplication.azurewebsites.net/communityAdmin/getAmenities', {
+    fetch(`${config.CONNECTION_STRING}/communityAdmin/getAmenities`, {
       credentials: 'include' 
     })
     .then(response => response.json())
@@ -282,7 +286,8 @@ async function deleteAnnouncement(AnnouncementID) {
     // validate the data
     if (isValidData(dataToInsert)) {
       try {
-        let response = await fetch('https://residentapplication.azurewebsites.net/communityAdmin/submitAmenityHours', {
+        const config = await fetchConfig();
+        let response = await fetch(`${config.CONNECTION_STRING}/communityAdmin/submitAmenityHours`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(dataToInsert),
@@ -317,8 +322,9 @@ async function deleteAnnouncement(AnnouncementID) {
   
     // validate the data
     if (isValidData(dataToInsert)) {
+      const config = await fetchConfig();
       try {
-        let response = await fetch('https://residentapplication.azurewebsites.net/communityAdmin/submitAmenity', {
+        let response = await fetch(`${config.CONNECTION_STRING}/communityAdmin/submitAmenity`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(dataToInsert),
@@ -345,8 +351,9 @@ async function deleteAnnouncement(AnnouncementID) {
   }
 
   async function getReservations() {
+    const config = await fetchConfig();
     try {
-        let response = await fetch('https://residentapplication.azurewebsites.net/communityAdmin/getReservations', {
+        let response = await fetch(`${config.CONNECTION_STRING}/communityAdmin/getReservations`, {
             method: 'GET',
             credentials: 'include'
         });
@@ -399,10 +406,10 @@ async function deleteAnnouncement(AnnouncementID) {
   }
 
   async function cancelReservation(ScheduleID, ReservationID) {
-  
+    const config = await fetchConfig();
     try {
       // You need to await the fetch call to complete
-      let response = await fetch('https://residentapplication.azurewebsites.net/communityAdmin/cancelReservation', {
+      let response = await fetch(`${config.CONNECTION_STRING}/communityAdmin/cancelReservation`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ScheduleID: ScheduleID, ReservationID: ReservationID }),
@@ -426,8 +433,9 @@ async function deleteAnnouncement(AnnouncementID) {
 }
 
 async function getApartments() {
+  const config = await fetchConfig();
   try {
-      let response = await fetch('https://residentapplication.azurewebsites.net/communityAdmin/getApartments', {
+      let response = await fetch(`${config.CONNECTION_STRING}/communityAdmin/getApartments`, {
           method: 'GET',
           credentials: 'include'
       });
@@ -452,6 +460,9 @@ function populateApartments(apartments) {
     const apartmentElement = document.createElement('div');
     apartmentElement.className = "block p-4 mb-4 bg-gray-600 rounded-xl hover:bg-gray-700 transition duration-200";
 
+    // Format the LeaseEndDate using formatDate function
+    const formattedLeaseEndDate = apartment.LeaseEndDate ? formatDate(apartment.LeaseEndDate) : 'Not Available';
+
     apartmentElement.innerHTML = `
       <h4 class="text-white font-semibold leading-6 mb-1">Apartment: ${apartment.ApartmentNumber}</h4>
       <div class="flex items-center mb-4">
@@ -462,9 +473,196 @@ function populateApartments(apartments) {
           <span class="h-2 w-2 mr-1 bg-blue-400 rounded-full"></span>
           <span class="text-xs font-medium text-blue-400">Emails: ${apartment.Emails}</span>
       </div>
+      <div class="flex items-center mb-4">
+          <span class="h-2 w-2 mr-1 bg-yellow-400 rounded-full"></span>
+          <span class="text-xs font-medium text-yellow-400">Lease End Date: ${formattedLeaseEndDate}</span>
+      </div>
       <p class="text-xs text-gray-300 leading-normal mb-10">Total Amount Due: $${apartment.TotalAmountDue}</p>
     `;
+
+    // Create the "Renew Lease" button
+    const renewLeaseButton = document.createElement('button');
+    renewLeaseButton.textContent = 'Update Lease';
+    renewLeaseButton.className = "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded";
+    renewLeaseButton.onclick = () => createLeaseRenewalFields(apartmentElement, apartment.ApartmentNumber);
+    
+    // Append the "Renew Lease" button to the apartmentElement
+    apartmentElement.appendChild(renewLeaseButton);
+
+    // Create the "End Lease" button
+    const endLeaseButton = document.createElement('button');
+    endLeaseButton.textContent = 'End Lease';
+    endLeaseButton.className = "bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-4";
+    endLeaseButton.addEventListener('click', () => {
+      endLease(apartment.ApartmentNumber);
+    });
+
+    // Append the buttons to the apartmentElement
+    apartmentElement.appendChild(renewLeaseButton);
+    apartmentElement.appendChild(endLeaseButton);
 
     apartmentsContainer.appendChild(apartmentElement);
   });
 }
+
+function createLeaseRenewalFields(apartmentElement, apartmentNumber) {
+  // Remove existing renewal fields if any to prevent duplicates
+  const existingFields = apartmentElement.querySelector('.renewal-fields');
+  if (existingFields) apartmentElement.removeChild(existingFields);
+
+  // Create container for new fields
+  const fieldContainer = document.createElement('div');
+  fieldContainer.className = 'renewal-fields';
+  fieldContainer.style.display = 'flex';
+  fieldContainer.style.flexDirection = 'column';
+  fieldContainer.style.gap = '10px';
+
+  // New Lease Date input
+  const newLeaseDateInput = document.createElement('input');
+  newLeaseDateInput.type = 'date';
+  newLeaseDateInput.placeholder = 'New Lease Date';
+  newLeaseDateInput.className = 'new-lease-date-input';
+  newLeaseDateInput.style.marginTop = '20px';
+  newLeaseDateInput.style.padding = '10px'; 
+
+  // Rent Amount input
+  const rentAmountInput = document.createElement('input');
+  rentAmountInput.type = 'number';
+  rentAmountInput.placeholder = 'Rent Amount';
+  rentAmountInput.className = 'rent-amount-input';
+  rentAmountInput.style.padding = '10px';
+
+  // Confirm Button
+  const confirmButton = document.createElement('button');
+  confirmButton.textContent = 'Confirm';
+  confirmButton.className = 'confirm-button';
+  confirmButton.style.marginTop = '10px';
+  confirmButton.style.padding = '10px';
+  confirmButton.onclick = () => updateLease(apartmentNumber, newLeaseDateInput.value, rentAmountInput.value);
+
+  // Append fields and button to container, then container to the apartment element
+  fieldContainer.appendChild(newLeaseDateInput);
+  fieldContainer.appendChild(rentAmountInput);
+  fieldContainer.appendChild(confirmButton);
+  apartmentElement.appendChild(fieldContainer);
+}
+
+
+async function updateLease(apartmentNumber, newLeaseDate, rentAmount) {
+  const config = await fetchConfig();
+  try {
+    // You need to await the fetch call to complete
+    let response = await fetch(`${config.CONNECTION_STRING}/communityAdmin/updateLease`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ApartmentNumber: apartmentNumber, NewLeaseDate: newLeaseDate, RentAmount: rentAmount }),
+      credentials: 'include'
+    });
+    
+    // Also await the response.json() call to resolve
+    let data = await response.json();
+    
+    if (data.success) {
+      // Handle the success scenario, such as redirecting to a confirmation page
+      window.location = './apartments.html';
+    } else {
+      // Handle the failure scenario
+      alert(data.message);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('An error occurred while processing your request.');
+  }
+}
+
+async function endLease(apartmentNumber) {
+  const config = await fetchConfig();
+  try {
+    // You need to await the fetch call to complete
+    let response = await fetch(`${config.CONNECTION_STRING}/communityAdmin/endLease`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ApartmentNumber: apartmentNumber}),
+      credentials: 'include'
+    });
+    
+    // Also await the response.json() call to resolve
+    let data = await response.json();
+    
+    if (data.success) {
+      // Handle the success scenario, such as redirecting to a confirmation page
+      window.location = './apartments.html';
+    } else {
+      // Handle the failure scenario
+      alert(data.message);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('An error occurred while processing your request.');
+  }
+}
+
+async function getLatePayments() {
+  const config = await fetchConfig();
+  try {
+      let response = await fetch(`${config.CONNECTION_STRING}/communityAdmin/getLatePayments`, {
+          method: 'GET',
+          credentials: 'include'
+      });
+
+      let data = await response.json();
+
+      if (data.success) {
+          populateLatePayments(data.latePayments);
+      } else {
+          console.error('Failed to fetch events:', data.message);
+      }
+  } catch (error) {
+      console.error('Error fetching events:', error);
+  }
+}
+
+
+function populateLatePayments(latePayments) {
+  const latePaymentsContainer = document.getElementById('latePaymentsContainer');
+  latePaymentsContainer.innerHTML = '';
+
+  latePayments.forEach(latePayment => {
+    const latePaymentsElement = document.createElement('div');
+    latePaymentsElement.className = "block p-4 mb-4 bg-gray-600 rounded-xl hover:bg-gray-700 transition duration-200";
+
+    // Format the LeaseEndDate using formatDate function
+    const formattedLatePaymentsDate = latePayment.OldestDueDate ? formatDate(latePayment.OldestDueDate) : 'Not Available';
+
+    latePaymentsElement.innerHTML = `
+      <h4 class="text-white font-semibold leading-6 mb-1">Apartment: ${latePayment.ApartmentNumber}</h4>
+      <div class="flex items-center mb-4">
+          <span class="h-2 w-2 mr-1 bg-green-400 rounded-full"></span>
+          <span class="text-xs font-medium text-green-400">Residents: </span>
+      </div>
+      <div class="flex items-center mb-4">
+          <span class="h-2 w-2 mr-1 bg-blue-400 rounded-full"></span>
+          <span class="text-xs font-medium text-blue-400">Emails: </span>
+      </div>
+      <div class="flex items-center mb-4">
+          <span class="h-2 w-2 mr-1 bg-yellow-400 rounded-full"></span>
+          <span class="text-xs font-medium text-yellow-400">Due Date: ${formattedLatePaymentsDate}</span>
+      </div>
+      <p class="text-xs text-gray-300 leading-normal mb-10">Total Amount Due: $${latePayment.TotalAmountDue}</p>
+    `;
+
+    // Create the "End Lease" button
+    const lateNoticeButton = document.createElement('button');
+    lateNoticeButton.textContent = 'Send Notice';
+    lateNoticeButton.className = "bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-4";
+    lateNoticeButton.addEventListener('click', () => {
+      sendLateNotice(latePayment.ApartmentNumber);
+    });
+
+    latePaymentsElement.appendChild(lateNoticeButton);
+
+    latePaymentsContainer.appendChild(latePaymentsElement);
+  });
+}
+
+

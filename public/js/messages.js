@@ -15,9 +15,10 @@ async function sendMaintenanceRequest() {
             return;
         }
     }
+    const config = await fetchConfig();
     
     // If all fields are filled, proceed with the fetch request
-    let response = await fetch('https://residentapplication.azurewebsites.net/message/send-maintenance-request', {
+    let response = await fetch(`${config.CONNECTION_STRING}/message/send-maintenance-request`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(fields),
@@ -51,9 +52,11 @@ async function sendContactMessage() {
             return;
         }
     }
+
+    const config = await fetchConfig();
     
     // If all fields are filled, proceed with the fetch request
-    let response = await fetch('https://residentapplication.azurewebsites.net/message/send-contact-message', {
+    let response = await fetch(`${config.CONNECTION_STRING}/message/send-contact-message`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(fields),
@@ -72,8 +75,9 @@ async function sendContactMessage() {
 }
 
 async function getEvents() {
+    const config = await fetchConfig();
     try {
-        let response = await fetch('https://residentapplication.azurewebsites.net/message/get-events', {
+        let response = await fetch(`${config.CONNECTION_STRING}/message/get-events`, {
             method: 'GET',
             credentials: 'include'
         });
@@ -129,8 +133,9 @@ function formatDate(dateString) {
 }
 
 async function getAnnoucements() {
+  const config = await fetchConfig();
     try {
-        let response = await fetch('https://residentapplication.azurewebsites.net/message/get-announcements', {
+        let response = await fetch(`${config.CONNECTION_STRING}/message/get-announcements`, {
             method: 'GET',
             credentials: 'include' // If your endpoint requires authentication
         });
@@ -172,8 +177,9 @@ function populateAnnouncement(announcements) {
 }
 
 async function loadMessagePreviews(type) {
+  const config = await fetchConfig();
     try {
-      const response = await fetch(`https://residentapplication.azurewebsites.net/message/get-messages`, {
+      const response = await fetch(`${config.CONNECTION_STRING}/message/get-messages`, {
         method: 'GET',
         credentials: 'include' // If your endpoint requires authentication
       });
@@ -222,5 +228,26 @@ async function loadMessagePreviews(type) {
       <p class="text-sm text-gray-300 mt-2">From: ${message.SenderUserID} | Date: ${new Date(message.TimeStamp).toLocaleString()}</p>
     `;
     messageDetailsContainer.appendChild(messageContent);
+  }
+
+  async function sendLateNotice(apartment) {
+    const config = await fetchConfig();
+    // If all fields are filled, proceed with the fetch request
+    let response = await fetch(`${config.CONNECTION_STRING}/message/send-late-notice`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ apartmentNumber: apartment }), // Corrected line
+        credentials: 'include'
+    });
+
+    let data = await response.json();
+    console.log(data.success);
+
+    if (data.success) {
+        document.cookie = "authenticated=true; path=/";
+        window.location = './adminindex.html';
+    } else {
+        alert(data.message);
+    }
   }
 
