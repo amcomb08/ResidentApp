@@ -1,13 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const db = require('./db');
-const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
-const bodyParser = require('body-parser');
-const crypto = require('crypto');
+const multer = require('multer');
+const { BlobServiceClient } = require('@azure/storage-blob');
+const upload = multer({ storage: multer.memoryStorage() });
 require('dotenv').config();
 
-// Nodemailer setup (NEED TO ADD TO SECRETS)
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -329,12 +328,11 @@ router.post('/send-late-notice', (req, res) => {
 });
 
 router.get('/get-events', (req, res) => {
-    // You may or may not need to check for a user session, depending on whether this data should be public
     if (!req.session || !req.session.userId) {
         return res.status(401).json({ success: false, message: 'User not logged in' });
     }
 
-    const getEventsQuery = 'SELECT * FROM Events'; // Adjust if you need specific columns only
+    const getEventsQuery = 'SELECT * FROM Events';
 
     db.query(getEventsQuery, (err, eventsResults) => {
         if (err) {
@@ -373,7 +371,6 @@ router.get('/get-announcements', (req, res) => {
 });
 
 router.get('/get-messages', (req, res) => {
-    // You may or may not need to check for a user session, depending on whether this data should be public
     if (!req.session || !req.session.userId) {
         return res.status(401).json({ success: false, message: 'User not logged in' });
     }
@@ -394,5 +391,6 @@ router.get('/get-messages', (req, res) => {
         }
     });
 });
+
 
 module.exports = router;

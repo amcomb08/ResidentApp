@@ -3,11 +3,9 @@ const router = express.Router();
 const db = require('./db');
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
-const bodyParser = require('body-parser');
 const crypto = require('crypto');
 require('dotenv').config();
 
-// Nodemailer setup (NEED TO ADD TO SECRETS)
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {

@@ -10,6 +10,7 @@ const messageRoutes = require('./routes/messageRoutes');
 const reservationRoutes = require('./routes/reservationRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const communityAdminRoutes = require('./routes/communityAdminRoutes');
+const documentRoutes = require('./routes/documentRoutes');
 require('dotenv').config();
 
 const app = express();
@@ -71,6 +72,7 @@ app.use('/message', messageRoutes);
 app.use('/reservation', reservationRoutes);
 app.use('/adminRoutes', adminRoutes);
 app.use('/communityAdmin', communityAdminRoutes);
+app.use('/document', documentRoutes);
 
 
 // Logout
