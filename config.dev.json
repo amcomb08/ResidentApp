@@ -1,4 +1,4 @@
 {
-    "CONNECTION_STRING": "https://localhost:8080"
+    "CONNECTION_STRING": "http://localhost:8080"
 }
   
