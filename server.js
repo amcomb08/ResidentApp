@@ -13,7 +13,7 @@ const communityAdminRoutes = require('./routes/communityAdminRoutes');
 require('dotenv').config();
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 8080;
 
 // CORS middleware setup
 app.use(cors({
