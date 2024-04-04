@@ -78,12 +78,12 @@
                             </p>
                             <span class="text-xs text-gray-300 font-semibold">PNG, JPG, GIF or up to 10MB</span>
                           </div>
-      <div class="flex-shrink-0 w-20 h-20 mb-4 mr-4 rounded-full">
+                      <div class="flex-shrink-0 w-20 h-20 mb-4 mr-4 rounded-full">
                             
                           </div>
                           
                         </div>
-      </div>
+                      </div>
                     </div>
                     <div class="mt-8 text-right">
                       <button id="submitButton" class="inline-block py-2 px-4 mb-2 text-xs text-center font-semibold leading-6 text-blue-50 bg-blue-500 hover:bg-blue-600 rounded-lg transition duration-200" type="submit">Upload</button>
@@ -110,11 +110,11 @@
       document.addEventListener('DOMContentLoaded', function() {
         initalizeNavBar();
         fetchAndDisplayUserDocuments();
-        const fileInput = document.getElementById('fileInput');
-        const submitButton = document.getElementById('submitButton');
 
         submitButton.addEventListener('click', async (event) => {
           event.preventDefault();
+          const fileInput = document.getElementById('fileInput');
+          const submitButton = document.getElementById('submitButton');
 
           const file = fileInput.files[0];
           if (!file) {

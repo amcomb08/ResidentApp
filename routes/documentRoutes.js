@@ -73,5 +73,64 @@ router.get('/user-documents', async (req, res) => {
     res.json(blobs); // Send back the list of blobs
 });
 
+router.get('/download/:blobName', async (req, res) => {
+    const userId = req.session.userId;
+    const {blobName } = req.params;
+    const decodedBlobName = decodeURIComponent(`${userId}/${blobName}`);
+
+    try {
+        const blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AZURE_STORAGE_CONNECTION_STRING);
+        const containerClient = blobServiceClient.getContainerClient('user-documents');
+        const blockBlobClient = containerClient.getBlockBlobClient(decodedBlobName);
+
+        const blobExists = await blockBlobClient.exists();
+        if (!blobExists) {
+            return res.status(404).send('Blob not found');
+        }
+
+        const downloadBlockBlobResponse = await blockBlobClient.download(0);
+
+        res.setHeader('Content-Type', downloadBlockBlobResponse.contentType);
+
+        res.setHeader('Content-Disposition', `attachment; filename="${blobName}"`);
+        
+        // Stream the blob's content to the client
+        downloadBlockBlobResponse.readableStreamBody.pipe(res);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error downloading blob');
+    }
+});
+
+router.delete('/delete/:blobName', async (req, res) => {
+    const userId = req.session.userId;
+    if (!userId) {
+        return res.status(403).send('Unauthorized');
+    }
+
+    const { blobName } = req.params;
+    const decodedBlobName = decodeURIComponent(`${userId}/${blobName}`);
+
+    try {
+        const blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AZURE_STORAGE_CONNECTION_STRING);
+        const containerClient = blobServiceClient.getContainerClient('user-documents');
+        const blockBlobClient = containerClient.getBlockBlobClient(decodedBlobName);
+
+        const blobDeleteResponse = await blockBlobClient.delete();
+        
+        // Check if the blob has been successfully deleted
+        if (blobDeleteResponse.errorCode) {
+            return res.status(500).send(`Error deleting blob: ${blobDeleteResponse.errorCode}`);
+        }
+        
+        // Respond to the client that the delete operation was successful
+        res.status(200).send({ success: true, message: 'Blob deleted successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error deleting blob');
+    }
+});
+
+
 
 module.exports = router;
