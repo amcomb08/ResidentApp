@@ -2,9 +2,6 @@ const express = require('express');
 const router = express.Router();
 const db = require('./db');
 const bcrypt = require('bcryptjs');
-const nodemailer = require('nodemailer');
-const bodyParser = require('body-parser');
-const crypto = require('crypto');
 
 
 router.post('/addUser', (req, res) => {

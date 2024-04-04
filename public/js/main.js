@@ -229,7 +229,8 @@ function createHeader() {
                 { text: 'Maintenance Request', href: 'maintenance.html' },
                 { text: 'Contact Us', href: 'contactus.html' },
                 { text: 'Reserve Amenity', href: 'amenities.html' },
-                { text: 'View Reservations', href: 'reservations.html'}
+                { text: 'View Reservations', href: 'reservations.html'},
+                { text: 'Documents', href: 'documents.html'},
             ]
         }
     ];

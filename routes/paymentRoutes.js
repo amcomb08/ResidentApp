@@ -2,9 +2,10 @@ const express = require('express');
 const router = express.Router();
 const db = require('./db');
 const crypto = require('crypto');
+require('dotenv').config();
 
-const ENCRYPTION_KEY = Buffer.from('9d239dba523edf58c16ed1da22dab2993636cffefa004629ca951dc6912004ac', 'hex'); // Convert hex string to Buffer
-const IV = Buffer.from('69ad758cc498b163092818cf16642487', 'hex'); // Convert hex string to Buffer
+const ENCRYPTION_KEY = Buffer.from(process.env.ENCRYPTION_KEY, 'hex'); // Convert hex string to Buffer
+const IV = Buffer.from(process.env.IV, 'hex'); // Convert hex string to Buffer
 
 function encrypt(text) {
     let cipher = crypto.createCipheriv('aes-256-cbc', ENCRYPTION_KEY, IV);
@@ -209,7 +210,7 @@ router.get('/getPaymentHistory', (req, res) => {
 
 router.post('/deletePaymentMethod', (req, res) => {
     const userID = req.session.userId;
-    const {cardID} = req.body; // The amount of payment to make
+    const {cardID} = req.body;
     if (!userID) {
         return res.status(401).json({ success: false, message: 'User not logged in' });
     }

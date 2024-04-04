@@ -104,10 +104,9 @@ CREATE TABLE PaymentsMade (
 -- User Documents Table
 CREATE TABLE UserDocuments (
     DocumentID INT AUTO_INCREMENT PRIMARY KEY,
-    DocumentType VARCHAR(255) NOT NULL,
-    DocumentReference TEXT NOT NULL,
-    MimeType VARCHAR(50),
     UserID INT NOT NULL,
+    blobName VARCHAR(255) NOT NULL,
+    blobUrl TEXT NOT NULL,
     FOREIGN KEY (UserID) REFERENCES UserAccounts(UserID)
 );
 

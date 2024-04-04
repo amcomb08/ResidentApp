@@ -160,13 +160,11 @@ router.get('/getAmenities', (req, res) => {
             return res.json({ success: false, message: 'No payment methods found.' });
         }
   
-        // Sending the payment methods directly
         return res.json({ success: true, amenities: amenitiesResults });
     });
   });
 
     router.post('/submitAmenityHours', async (req, res) => {
-        // Assuming req.body contains your dataToInsert object
         if (!req.session || !req.session.userId) {
             return res.json({ success: false, message: 'User is not logged in.' });
         }
@@ -231,7 +229,7 @@ router.get('/getAmenities', (req, res) => {
                     timeSlots.push({
                         start: startTime.toTimeString().split(' ')[0], // Format to "HH:MM:SS"
                         end: slotEnd.toTimeString().split(' ')[0],   // Format to "HH:MM:SS"
-                        date: date // Already in "YYYY-MM-DD" format
+                        date: date
                     });
                 }
         
@@ -475,7 +473,6 @@ router.get('/getAmenities', (req, res) => {
                 return res.json({ success: false, message: 'Database error occurred.' });
             }
     
-            // Sending the payment methods directly
             return res.json({ success: true, message: 'Success'  });
         });
     });
@@ -496,7 +493,6 @@ router.get('/getAmenities', (req, res) => {
                 return res.json({ success: false, message: 'Database error occurred.' });
             }
     
-            // Sending the payment methods directly
             return res.json({ success: true, message: 'Success'  });
         });
     });
@@ -506,8 +502,6 @@ router.get('/getAmenities', (req, res) => {
             return res.status(401).json({ success: false, message: 'User not logged in' });
         }
 
-        // SQL query to fetch all apartments with the names and the current total amount due
-        // where an ApartmentNumber is assigned. If there is no balance, it defaults to 0.
         const getLatePaymentsQuery = `
         SELECT 
         PD.ApartmentNumber,
