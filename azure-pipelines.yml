@@ -1,6 +1,10 @@
 trigger:
 - main
 
+variables:
+  ENCRYPTION_KEY: $(EncryptionKey)
+  IV: $(IVKey)
+
 pool:
   vmImage: 'ubuntu-latest'
 
@@ -35,7 +39,7 @@ steps:
     containerRegistry: 'Resident_App_Registry'
 
 - script: |
-    docker-compose up -d
+    ENCRYPTION_KEY=$(EncryptionKey) IV=$(IVKey) docker-compose up -d
   displayName: 'Start MySQL Container'
   workingDirectory: $(Build.SourcesDirectory)
 
