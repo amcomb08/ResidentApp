@@ -5,6 +5,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: 'CULTUREAPP'
       MYSQL_DATABASE: 'culture-app-db'
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+      IV: ${IV}
     ports:
       - "3306:3306"
     volumes:
@@ -22,6 +24,8 @@ services:
       DB_USER: root
       DB_PASSWORD: 'CULTUREAPP'
       DB_NAME: 'culture-app-db'
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+      IV: ${IV}
     ports:
       - "5005:5005"
     depends_on:
