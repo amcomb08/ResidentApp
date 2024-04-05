@@ -1,6 +1,10 @@
 trigger:
 - main
 
+variables:
+  ENCRYPTION_KEY: $(EncryptionKey)
+  IV: $(IV)
+
 pool:
   vmImage: 'ubuntu-latest'
 
