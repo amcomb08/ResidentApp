@@ -3,7 +3,7 @@ trigger:
 
 variables:
   ENCRYPTION_KEY: $(EncryptionKey)
-  IV: $(IV)
+  IV: $(Iv)
 
 pool:
   vmImage: 'ubuntu-latest'
