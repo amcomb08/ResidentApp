@@ -100,7 +100,7 @@ async function fillPaymentDropdown() {
 async function getPaymentDue() {
   const config = await fetchConfig();
   fetch(`${config.CONNECTION_STRING}/payments/getPaymentDue`, {
-      credentials: 'include' // Important for sessions
+      credentials: 'include'
   })
   .then(response => response.json())
   .then(data => {

@@ -84,7 +84,7 @@ app.post('/logout', (req, res) => {
                 // Handle error during session destruction
                 res.json({ success: false, message: 'Error logging out.' });
             } else {
-                res.clearCookie('connect.sid'); // if you're using express-session
+                res.clearCookie('connect.sid');
                 res.json({ success: true });
             }
         });

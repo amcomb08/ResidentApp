@@ -19,7 +19,7 @@ async function loadAmenities() {
     .then(response => response.json())
     .then(data => {
       if (data.success && data.amenities) {
-        const amenitiesContainer = document.getElementById('amenitiesList'); // Make sure you have a container with this ID
+        const amenitiesContainer = document.getElementById('amenitiesList');
   
         // Clear previous amenities if needed
         amenitiesContainer.innerHTML = '';

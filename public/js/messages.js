@@ -137,7 +137,7 @@ async function getAnnoucements() {
     try {
         let response = await fetch(`${config.CONNECTION_STRING}/message/get-announcements`, {
             method: 'GET',
-            credentials: 'include' // If your endpoint requires authentication
+            credentials: 'include'
         });
         
         let data = await response.json();
@@ -155,14 +155,14 @@ async function getAnnoucements() {
 }
 
 function populateAnnouncement(announcements) {
-    const announcementsContainer = document.getElementById('announcementsContainer'); // Ensure this container exists in your HTML
+    const announcementsContainer = document.getElementById('announcementsContainer');
     announcementsContainer.innerHTML = ''; // Clear existing announcements
 
     announcements.forEach(announcement => {
         // Create the announcement block element
         const announcementBlock = document.createElement('a');
         announcementBlock.className = "block p-4 mb-4 bg-gray-600 rounded-xl hover:bg-gray-700 transition duration-200";
-        announcementBlock.href = "#"; // Set this to the link for the announcement if applicable
+        announcementBlock.href = "#";
 
         // Populate the announcement details
         announcementBlock.innerHTML = `
@@ -236,7 +236,7 @@ async function loadMessagePreviews(type) {
     let response = await fetch(`${config.CONNECTION_STRING}/message/send-late-notice`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ apartmentNumber: apartment }), // Corrected line
+        body: JSON.stringify({ apartmentNumber: apartment }),
         credentials: 'include'
     });
 

@@ -180,7 +180,7 @@ async function submitCreateEvent() {
 }
 
 function populateAnnouncement(announcements) {
-    const announcementsContainer = document.getElementById('announcementsContainer'); // Ensure this container exists in your HTML
+    const announcementsContainer = document.getElementById('announcementsContainer'); 
     announcementsContainer.innerHTML = ''; // Clear existing announcements
 
     announcements.forEach(announcement => {

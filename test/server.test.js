@@ -1,5 +1,5 @@
 const request = require('supertest');
-const { app, db } = require('../server.js'); // Make sure to provide the correct path to your Express app
+const { app, db } = require('../server.js');
 
 describe('Server Tests', function() {
   let server;

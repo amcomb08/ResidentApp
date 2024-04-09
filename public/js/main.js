@@ -186,7 +186,7 @@ function createAdminHeader() {
     // Create the anchor tag for the logout button
     const logoutButtonAnchor = document.createElement('a');
     // Set the href if you're using a link to log out
-    logoutButtonAnchor.href = '#'; // Set this to your logout script or leave it to be handled by JS
+    logoutButtonAnchor.href = '#';
 
     // Create the logout button
     const logoutButton = document.createElement('button');
@@ -289,7 +289,7 @@ function createHeader() {
     // Create the anchor tag for the logout button
     const logoutButtonAnchor = document.createElement('a');
     // Set the href if you're using a link to log out
-    logoutButtonAnchor.href = '#'; // Set this to your logout script or leave it to be handled by JS
+    logoutButtonAnchor.href = '#'; 
 
     // Create the logout button
     const logoutButton = document.createElement('button');
