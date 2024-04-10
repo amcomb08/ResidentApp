@@ -637,12 +637,8 @@ function populateLatePayments(latePayments) {
     latePaymentsElement.innerHTML = `
       <h4 class="text-white font-semibold leading-6 mb-1">Apartment: ${latePayment.ApartmentNumber}</h4>
       <div class="flex items-center mb-4">
-          <span class="h-2 w-2 mr-1 bg-green-400 rounded-full"></span>
-          <span class="text-xs font-medium text-green-400">Residents: </span>
       </div>
       <div class="flex items-center mb-4">
-          <span class="h-2 w-2 mr-1 bg-blue-400 rounded-full"></span>
-          <span class="text-xs font-medium text-blue-400">Emails: </span>
       </div>
       <div class="flex items-center mb-4">
           <span class="h-2 w-2 mr-1 bg-yellow-400 rounded-full"></span>
